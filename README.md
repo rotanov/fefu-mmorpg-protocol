@@ -15,41 +15,41 @@ Register
 ========
 Request
 
-action: register
-login: <new user's login> 
-password: <new user's password>
+    action: register
+    login: <new user's login> 
+    password: <new user's password>
 
 Response
 
-result: [ok,bad_password,bad_login,login_exists]
-sid: <random generated sid as string>
-websocket: <>
+    result: [ok,bad_password,bad_login,login_exists]
+    sid: <random generated sid as string>
+    websocket: <>
 
 Login
 =====
 
 Request
  
-action: login
-login: <user's login> 
-password: <user's password>
+    action: login
+    login: <user's login> 
+    password: <user's password>
 
 Response
 
-result: [ok,wrong_password]
-sid: <random generated sid as string>
+    result: [ok,wrong_password]
+    sid: <random generated sid as string>
 
 Logout
 ======
 
 Request
 
-action: logout
-sid: <user's sid>
+    action: logout
+    sid: <user's sid>
 
 Response
 
-result: [ok,bad_sid]
+    result: [ok,bad_sid]
 
 
 
