@@ -4,7 +4,7 @@ fefu-mmorpg-protocol
 A protocol specification for fefu-mmorpg project
 
 Client sends the body to the server with a single json-object by HTTP 1.1
-protocol. This object containts keys (action,login,password,sid), which define
+protocol. This object containts keys (action, login, password, sid), which define
 requested action.
 
 Answer from server mime-type/json is a json-object, which contains keys
@@ -21,7 +21,7 @@ Request
 
 Response
 
-    result: [ok,bad_password,bad_login,login_exists]
+    result: [ok, badPassword, badLogin, loginExists]
     sid: <random generated sid as string>
     websocket: <>
 
@@ -36,7 +36,7 @@ Request
 
 Response
 
-    result: [ok,wrong_password]
+    result: [ok, wrongPassword]
     sid: <random generated sid as string>
 
 Logout
@@ -49,7 +49,7 @@ Request
 
 Response
 
-    result: [ok,bad_sid]
+    result: [ok, badSid]
 
 
 
