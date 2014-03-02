@@ -36,10 +36,10 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
         - [Examine](#examine)
             - [Request](#request-3)
             - [Response](#response-3)
-        - [Look](#look)
+        - [Get Dictionary](#get-dictionary)
             - [Request](#request-4)
             - [Response](#response-4)
-        - [Get Dictionary](#get-dictionary)
+        - [Look](#look)
             - [Request](#request-5)
             - [Response](#response-5)
         - [Move](#move)
@@ -96,9 +96,8 @@ message-body. Content-Type header of HTTP response MUST be `application/json`.
 
 The requirements for user credentials are as follows:
 
-login: `[a-zA-Z0-9\-\']{2,36}` i.e. minimal length is 2 symbols and maximum
-length is 36 symbols. Allowed charset is latin symbols, numbers, `'`
-and `-`.
+login: `[a-zA-Z0-9]{2,36}` i.e. minimal length is 2 symbols and maximum
+length is 36 symbols. Allowed charset is latin symbols and numbers.
 
 password: `.{6, 36}` i.e. minimal length is 6 symbols and maximum length is
 36 symbols. Any character is allowed except characters indexed from 0 to 31
@@ -171,26 +170,35 @@ In case of successful response `result` name of respone MUST have a value `ok`.
     x:
     y:
 
+#### Get Dictionary
+
+##### Request
+
+    action: getDictionary
+
+##### Response
+
+    dictionary: {}    
+
 #### Look
 
 ##### Request
 
     action: look
-    
-
-##### Response
-
-#### Get Dictionary
-
-##### Request
 
 ##### Response
 
 #### Move
-
+    
 ##### Request
 
+    action: move
+    direction: [west, north, east, south]
+    tick:
+
 ##### Response
+
+
 
 #### Tick
 
