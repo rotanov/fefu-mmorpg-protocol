@@ -49,18 +49,16 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
 
 ### Requirements
 
-The key words `MUST`, `MUST NOT`, `REQUIRED`, `SHALL`, `SHALL NOT`,
-`SHOULD`, `SHOULD NOT`, `RECOMMENDED`, `MAY`, and `OPTIONAL` in this
-document are to be interpreted as described in
-[RFC 2119](https://tools.ietf.org/html/rfc2119).
+The key words `MUST`, `MUST NOT`, `REQUIRED`, `SHALL`, `SHALL NOT`, `SHOULD`,
+`SHOULD NOT`, `RECOMMENDED`, `MAY`, and `OPTIONAL` in this document are to be
+interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
 
-An implementation is not compliant if it fails to satisfy one or more
-of the MUST or REQUIRED level requirements for the protocols it
-implements. An implementation that satisfies all the MUST or REQUIRED
-level and all the SHOULD level requirements for its protocols is said
-to be `unconditionally compliant`; one that satisfies all the MUST
-level requirements but not all the SHOULD level requirements for its
-protocols is said to be `conditionally compliant.`
+An implementation is not compliant if it fails to satisfy one or more of the
+MUST or REQUIRED level requirements for the protocols it implements. An
+implementation that satisfies all the MUST or REQUIRED level and all the SHOULD
+level requirements for its protocols is said to be `unconditionally compliant`;
+one that satisfies all the MUST level requirements but not all the SHOULD level
+requirements for its protocols is said to be `conditionally compliant.`
 
 ### Introduction
 
@@ -68,21 +66,21 @@ Client and server communicate with request and response messages.
 Each message MUST be represented by a single JSON object.
 Messages are sent via either HTTP/1.1 or WebSocket protocol.
 
-Request message MUST contain a single `action` name with a corresponding string
+Request message MUST contain a single key `action` with a corresponding string
 value determining required action.
 Each request message MUST be answered with a corresponging response message.
 
-Response message MUST contain a single `result` name with a corresponding value
+Response message MUST contain a single key `result` with a corresponding value
 describing result.
 
-Both request and response messages MAY contain any other name/value pairs
+Both request and response messages MAY contain any other key/value pairs
 specific for particular request/response.
 
 ### Terminology
 
 TBD — http://en.wiktionary.org/wiki/TBD
 
-Name in context of json message stands for name in name/value pair which is the
+Key in context of json message stands for name in name/value pair which is the
 same as key/value pair or attribute/value pair. JSON RFC uses `name` in such
 context.
 
@@ -149,28 +147,39 @@ Those rules apply to any client-server communication below this point.
 Explicit inclusion of these rules may be ommited. If there is an exception from
 the rules, the corresponding section shall state it explicitly.
 
-Each request message sent after client has been logged in MUST have a name `sid`
+Each request message sent after client has been logged in MUST have a key `sid`
 with a string value of client sid provided by server. In case of invalid sid the
-`result` name of response MUST have a value of `badSid`.
+`result` key of response MUST have a value of `badSid`.
 
-In case of successful response `result` name of respone MUST have a value `ok`.
+In case of successful response `result` key of respone MUST have a value `ok`.
 
 #### Examine
 
 ##### Request
 
     action: examine
-    id: <object's identifier>
+    id: <actor's identifier>
 
 ##### Response
 
-    id:
-    type:
-    login:
-    x:
-    y:
+    result: [ok, badSid, badId]
+    id: <actor's id>
+    type: <actor's type>
+    login: <player's login>
+    x: <x coordinate>
+    y: <y coordinate>
 
 #### Get Dictionary
+
+Dictionary is a json object describing mapping from game map cell (recieved via
+look action) to string value of cell type e.g.
+
+```json
+{
+    ".": "grass",
+    "#": "wall"
+}
+```
 
 ##### Request
 
@@ -178,15 +187,46 @@ In case of successful response `result` name of respone MUST have a value `ok`.
 
 ##### Response
 
-    dictionary: {}
+    dictionary: {...}
 
 #### Look
+
+A request for server to provide information for a map area around the client's
+player. Such information MUST be provided via keys `map` and `objects`.
+
+TBD: If size of such an area must be standardized
+
+`map` key MUST have a value of an array of array of strings. Such strings are
+decoded via dictionary got using `getDictionary` request. `map` 2d array has
+row-major order. E.g. for a 4x6 (4 rows, 6 columns) map area:
+
+```json
+"map":
+[
+    ["#", "#", ".", "#", "#", "#"],
+    [".", ".", ".", ".", ".", "."],
+    [".", ".", ".", ".", ".", "."],
+    ["#", "#", "#", ".", "#", "#"]
+]
+```
+
+`actors` key MUST have a value of an array of objects type. Each element of the
+array MUST describe a single actor present at the provided area in the following
+form:
+
+    type: <actor's type>
+    id: <actor's id>
+    x: <x coordinate of actor>
+    y: <y coordinate of actor>
 
 ##### Request
 
     action: look
 
 ##### Response
+
+    map: [[...]]
+    actors: [{...}, ...]
 
 #### Move
     
@@ -198,15 +238,19 @@ In case of successful response `result` name of respone MUST have a value `ok`.
 
 ##### Response
 
+TBD:
 
+- If client should expect `"result": "ok"` or even any response at all
+- If `result` must be distinct from `ok` in case of player trying to move in the
+direction of wall right before him
 
 #### Tick
 
 For each simulation tick server MUST broadcast current tick to all the clients.
 Tick message is neither request nor response message therefore implicit rules
-for names `sid`, `action`, `result` don't apply to it.
+for keys `sid`, `action`, `result` don't apply to it.
 
-Tick message is a JSON object with a single name `tick` with a value of
+Tick message is a JSON object with a single key `tick` with a value of
 broadcasted tick number.
 
 Tick numbers are required to grow monotonously by `1` for each tick.
