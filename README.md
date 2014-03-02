@@ -46,8 +46,6 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
             - [Request](#request-6)
             - [Response](#response-6)
         - [Tick](#tick)
-            - [Request](#request-7)
-            - [Response](#response-7)
 
 ### Requirements
 
@@ -73,8 +71,10 @@ Messages are sent via either HTTP/1.1 or WebSocket protocol.
 Request message MUST contain a single `action` name with a corresponding string
 value determining required action.
 Each request message MUST be answered with a corresponging response message.
+
 Response message MUST contain a single `result` name with a corresponding value
 describing result.
+
 Both request and response messages MAY contain any other name/value pairs
 specific for particular request/response.
 
@@ -178,7 +178,7 @@ In case of successful response `result` name of respone MUST have a value `ok`.
 
 ##### Response
 
-    dictionary: {}    
+    dictionary: {}
 
 #### Look
 
@@ -194,7 +194,7 @@ In case of successful response `result` name of respone MUST have a value `ok`.
 
     action: move
     direction: [west, north, east, south]
-    tick:
+    tick: <tick number for move action>
 
 ##### Response
 
@@ -202,6 +202,11 @@ In case of successful response `result` name of respone MUST have a value `ok`.
 
 #### Tick
 
-##### Request
+For each simulation tick server MUST broadcast current tick to all the clients.
+Tick message is neither request nor response message therefore implicit rules
+for names `sid`, `action`, `result` don't apply to it.
 
-##### Response
+Tick message is a JSON object with a single name `tick` with a value of
+broadcasted tick number.
+
+Tick numbers are required to grow monotonously by `1` for each tick.
