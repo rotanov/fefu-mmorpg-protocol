@@ -32,6 +32,7 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
             - [Request](#request-2)
             - [Response](#response-2)
     - [Game Interaction](#game-interaction)
+        - [Common Invariants](#common-invariants)
         - [Examine](#examine)
             - [Request](#request-3)
             - [Response](#response-3)
@@ -95,13 +96,13 @@ message-body. Content-Type header of HTTP response MUST be `application/json`.
 
 The requirements for user credentials are as follows:
 
-    login: `[a-zA-Z0-9\-\']{2,36}` i.e. minimal length is 2 symbols and maximum
-    length is 36 symbols. Allowed charset is latin symbols, numbers, `'`
-    and `-`.
+login: `[a-zA-Z0-9\-\']{2,36}` i.e. minimal length is 2 symbols and maximum
+length is 36 symbols. Allowed charset is latin symbols, numbers, `'`
+and `-`.
 
-    password: `.{6, 36}` i.e. minimal length is 6 symbols and maximum length is
-    36 symbols. Any character is allowed except characters indexed from 0 to 31
-    in ASCII.
+password: `.{6, 36}` i.e. minimal length is 6 symbols and maximum length is
+36 symbols. Any character is allowed except characters indexed from 0 to 31
+in ASCII.
 
 ##### Request
 
@@ -143,20 +144,39 @@ The requirements for user credentials are as follows:
 All communication other than authorization stage is done via WebSocket protocol
 as underlying transport.
 
+#### Common Invariants
+
+Those rules apply to any client-server communication below this point.
+Explicit inclusion of these rules may be ommited. If there is an exception from
+the rules, the corresponding section shall state it explicitly.
+
 Each request message sent after client has been logged in MUST have a name `sid`
 with a string value of client sid provided by server. In case of invalid sid the
-`result` name of response will have a value of `badSid`. Those rules apply to
-any request below this point. Explicit inclusion of these rules will be ommited.
+`result` name of response MUST have a value of `badSid`.
 
-#### Request
+In case of successful response `result` name of respone MUST have a value `ok`.
 
-##### Examine
+#### Examine
+
+##### Request
+
+    action: examine
+    id: <object's identifier>
 
 ##### Response
+
+    id:
+    type:
+    login:
+    x:
+    y:
 
 #### Look
 
 ##### Request
+
+    action: look
+    
 
 ##### Response
 
