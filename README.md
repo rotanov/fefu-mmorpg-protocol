@@ -123,7 +123,7 @@ in ASCII.
 
     result: [ok, invalidCredentials]
     sid: <string representation of session identifier>
-    webSocket: <TBD>
+    webSocket: <WebSocket server URI>
     id: <player ID for use with Game Interaction requests>
 
 #### Logout
