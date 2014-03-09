@@ -124,6 +124,7 @@ in ASCII.
     result: [ok, invalidCredentials]
     sid: <string representation of session identifier>
     webSocket: <TBD>
+    id: <player ID for use with Game Interaction requests>
 
 #### Logout
 
