@@ -28,11 +28,11 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
         - [Login](#login)
             - [Request](#request-1)
             - [Response](#response-1)
+    - [Game Interaction](#game-interaction)
+        - [Common Invariants](#common-invariants)
         - [Logout](#logout)
             - [Request](#request-2)
             - [Response](#response-2)
-    - [Game Interaction](#game-interaction)
-        - [Common Invariants](#common-invariants)
         - [Examine](#examine)
             - [Request](#request-3)
             - [Response](#response-3)
@@ -126,17 +126,6 @@ in ASCII.
     webSocket: <WebSocket server URI>
     id: <player ID for use with Game Interaction requests>
 
-#### Logout
-
-##### Request
-
-    action: logout
-    sid: <client's sid>
-
-##### Response
-
-    result: [ok, badSid]
-
 ### Game Interaction
 
 All communication other than authorization stage is done via WebSocket protocol
@@ -153,6 +142,19 @@ with a string value of client sid provided by server. In case of invalid sid the
 `result` key of response MUST have a value of `badSid`.
 
 In case of successful response `result` key of respone MUST have a value `ok`.
+
+On all requests with the key `action` client MUST receive the same key 'action' with the same value.
+
+#### Logout
+
+##### Request
+
+    action: logout
+    sid: <client's sid>
+
+##### Response
+
+    result: [ok, badSid]
 
 #### Examine
 
