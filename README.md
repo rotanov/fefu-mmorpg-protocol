@@ -1,4 +1,4 @@
-## FEFU MMORPG Protocol — FEMP/0.1
+## FEFU MMORPG Protocol — FEMP/0.2
 
 ### Abstract
 
@@ -39,6 +39,7 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
         - [Get Dictionary](#get-dictionary)
             - [Request](#request-4)
             - [Response](#response-4)
+        - [Logout](#logout-1)
         - [Look](#look)
             - [Request](#request-5)
             - [Response](#response-5)
@@ -46,6 +47,11 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
             - [Request](#request-6)
             - [Response](#response-6)
         - [Tick](#tick)
+    - [Testing](#testing)
+        - [Start Testing](#start-testing)
+            - [Request](#request-7)
+        - [Set Up Constants](#set-up-constants)
+            - [Request](#request-8)
 
 ### Requirements
 
@@ -72,6 +78,12 @@ Each request message MUST be answered with a corresponging response message.
 
 Response message MUST contain a single key `result` with a corresponding value
 describing result.
+
+Each response MUST contain key `action` with a value of the same key `action` of
+corresponding request. This one serves for describing response type.
+
+If server does not handle the request regardless of underlying transport server
+MUST respond with a key `result` of value `badAction`.
 
 Both request and response messages MAY contain any other key/value pairs
 specific for particular request/response.
@@ -139,14 +151,14 @@ in ASCII.
 
 ### Game Interaction
 
-All communication other than authorization stage is done via WebSocket protocol
-as underlying transport.
+All communication other than authorization stage (with an exception of logout)
+is done via WebSocket protocol as underlying transport.
 
 #### Common Invariants
 
-Those rules apply to any client-server communication below this point.
-Explicit inclusion of these rules may be ommited. If there is an exception from
-the rules, the corresponding section shall state it explicitly.
+Those rules apply to any client-server communication of [Game Interaction](#game-interaction)
+section. Explicit inclusion of these rules may be ommited. If there is an
+exception from the rules, the corresponding section shall state it explicitly.
 
 Each request message sent after client has been logged in MUST have a key `sid`
 with a string value of client sid provided by server. In case of invalid sid the
@@ -189,6 +201,10 @@ look action) to string value of cell type e.g.
 ##### Response
 
     dictionary: {...}
+
+#### Logout
+
+See [Logout](#logout)
 
 #### Look
 
@@ -255,3 +271,40 @@ Tick message is a JSON object with a single key `tick` with a value of
 broadcasted tick number.
 
 Tick numbers are required to grow monotonously by `1` for each tick.
+
+### Testing
+
+#### Start Testing
+
+This request MUST be sent each time at the beginning of testing stage.
+
+##### Request
+
+    action: startTesting
+
+#### Set Up Constants
+
+Upload a set of constants for a server to immediately set up. There is a
+reference set of constants for the purposes of cross server testing:
+
+```json
+{
+    "action": "setUpConst",
+    "playerVelocity": 1.0,
+    "slideThreshold": 0.1,
+    "ticksPerSecond": 60,
+    "screenRowCount": 7,
+    "screenColumnCount": 9
+}
+```
+
+##### Request
+
+```
+action: setUpConst
+playerVelocity: <a portion of tile player travels through the world per second>
+slideThreshold: <a portion of tile which gets ignored when moving towards it>
+ticksPerSecond: <a number of simulation cycles per second>
+screenRowCount: <a number of tile rows in a rectangle get via `look`>
+screenColumnCount: <a number of tile columns in a rectangle get via `look`>
+```
