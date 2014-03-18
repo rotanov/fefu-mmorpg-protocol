@@ -244,6 +244,8 @@ form:
 
     map: [[...]]
     actors: [{...}, ...]
+    x: <x coordinate of player in tile space>
+    y: <y coordinate of player in tile space>
 
 #### Move
     
