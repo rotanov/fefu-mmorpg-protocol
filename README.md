@@ -244,8 +244,8 @@ form:
 
     map: [[...]]
     actors: [{...}, ...]
-    x: <x coordinate of player's center in tile space>
-    y: <y coordinate of player's center in tile space>
+    x: <global map space x coordinate of player's center>
+    y: <global map space y coordinate of player's center>
 
 #### Move
     
