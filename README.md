@@ -233,8 +233,8 @@ form:
 
     type: <actor's type>
     id: <actor's id>
-    x: <x coordinate of actor>
-    y: <y coordinate of actor>
+    x: <global map space x coordinate of actor>
+    y: <global map space y coordinate of actor>
 
 ##### Request
 
