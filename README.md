@@ -289,9 +289,16 @@ This request MUST be sent each time at the beginning of testing stage.
 Once this message is responded with `"result": "ok"`, it is valid to state
 that testing stage is now active.
 
+It is invalid to request Start Testing when testing stage is already active. In
+such case request MUST be answered with `"result": "badAction"`.
+
 ##### Request
 
     action: startTesting
+
+##### Response
+
+    result: [ok, badAction]
 
 #### Stop Testing
 
@@ -304,6 +311,10 @@ stage.
 ##### Request
 
     action: stopTesting
+
+##### Response
+
+    result: [ok, badAction]
 
 #### Set Up Constants
 
@@ -332,4 +343,27 @@ slideThreshold: <a portion of tile which gets ignored when moving towards it>
 ticksPerSecond: <a number of simulation cycles per second>
 screenRowCount: <a number of tile rows in a rectangle get via `look`>
 screenColumnCount: <a number of tile columns in a rectangle get via `look`>
+```
+
+##### Response
+
+    result: [ok, badAction]
+
+#### Get Constants
+
+Get a set of current constant values.
+
+##### Request
+
+    action: getConst
+
+##### Response
+
+```
+result: ok
+playerVelocity: <value>
+slideThreshold: <value>
+ticksPerSecond: <value>
+screenRowCount: <value>
+screenColumnCount: <value>
 ```
