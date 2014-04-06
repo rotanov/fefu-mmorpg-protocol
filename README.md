@@ -60,6 +60,9 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
         - [Get Constants](#get-constants)
             - [Request](#request-10)
             - [Response](#response-10)
+        - [Set Up Map](#set-up-map)
+            - [Request](#request-11)
+            - [Response](#response-11)
 
 ### Requirements
 
@@ -80,18 +83,20 @@ Client and server communicate with request and response messages.
 Each message MUST be represented by a single JSON object.
 Messages are sent via either HTTP/1.1 or WebSocket protocol.
 
-Request message MUST contain a single key `action` with a corresponding string
-value determining required action.
+Request message MUST contain a key `action` with a corresponding string value
+determining required action.
+
 Each request message MUST be answered with a corresponding response message.
 
-Response message MUST contain a single key `result` with a corresponding value
+Response message MUST contain a key `result` with a corresponding value
 describing result.
 
 Each response MUST contain key `action` with a value of the same key `action` of
 corresponding request. This one serves for describing response type.
 
-If server does not handle the request regardless of underlying transport server
-MUST respond with a key `result` of value `badAction`.
+If server does not handle the request regardless of underlying transport and
+with regard to value of 'action' key then server MUST respond with a key
+`result` of value `badAction`.
 
 Both request and response messages MAY contain any other key/value pairs
 specific for particular request/response.
@@ -373,3 +378,31 @@ ticksPerSecond: <value>
 screenRowCount: <value>
 screenColumnCount: <value>
 ```
+
+#### Set Up Map
+
+Testing stage only.
+
+Upload map to server and set it up as currently active. If server assumes
+uploaded map to be invalid (e.g. malformed map array or wrong cell value) then
+the request MUST be responded with `badMap`. Innermost values of `map` key are
+those found in [Dictionary](#get-dictionary).
+
+##### Request
+
+```json
+{
+    "action": "setUpMap",
+    "map": [
+    [<column count number of values>],
+    [<column count number of values>],
+    [<column count number of values>],
+    ... <total of row count arrays with row values>
+    [<column count number of values>]
+    ]
+}
+```
+
+##### Response
+
+    result: [ok, badMap, badAction]
