@@ -14,7 +14,7 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
 
 ### Table of Contents
 
-- [FEFU MMORPG Protocol — FEMP/0.1](#fefu-mmorpg-protocol-—-femp01)
+- [FEFU MMORPG Protocol — FEMP/0.2](#fefu-mmorpg-protocol-—-femp02)
     - [Abstract](#abstract)
     - [Status of This Memo](#status-of-this-memo)
     - [Table of Contents](#table-of-contents)
@@ -50,8 +50,10 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
     - [Testing](#testing)
         - [Start Testing](#start-testing)
             - [Request](#request-7)
-        - [Set Up Constants](#set-up-constants)
+        - [Stop Testing](#stop-testing)
             - [Request](#request-8)
+        - [Set Up Constants](#set-up-constants)
+            - [Request](#request-9)
 
 ### Requirements
 
@@ -74,7 +76,7 @@ Messages are sent via either HTTP/1.1 or WebSocket protocol.
 
 Request message MUST contain a single key `action` with a corresponding string
 value determining required action.
-Each request message MUST be answered with a corresponging response message.
+Each request message MUST be answered with a corresponding response message.
 
 Response message MUST contain a single key `result` with a corresponding value
 describing result.
@@ -276,15 +278,36 @@ Tick numbers are required to grow monotonously by `1` for each tick.
 
 ### Testing
 
+There are a number of request messages available only when server is in the
+testing stage. Such messages are marked with "Testing stage only." If such a
+message to be sent while testing stage is not active, server MUST respond with
+`"result": "badAction"`.
+
 #### Start Testing
 
 This request MUST be sent each time at the beginning of testing stage.
+Once this message is responded with `"result": "ok"`, it is valid to state
+that testing stage is now active.
 
 ##### Request
 
     action: startTesting
 
+#### Stop Testing
+
+Testing stage only.
+
+Each testing stage MUST be closed with this request. Once responded with
+`"result": "ok"` it is valid to state that server is no more in the testing
+stage.
+
+##### Request
+
+    action: stopTesting
+
 #### Set Up Constants
+
+Testing stage only.
 
 Upload a set of constants for a server to immediately set up. There is a
 reference set of constants for the purposes of cross server testing:
