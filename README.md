@@ -50,10 +50,16 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
     - [Testing](#testing)
         - [Start Testing](#start-testing)
             - [Request](#request-7)
+            - [Response](#response-7)
         - [Stop Testing](#stop-testing)
             - [Request](#request-8)
+            - [Response](#response-8)
         - [Set Up Constants](#set-up-constants)
             - [Request](#request-9)
+            - [Response](#response-9)
+        - [Get Constants](#get-constants)
+            - [Request](#request-10)
+            - [Response](#response-10)
 
 ### Requirements
 
