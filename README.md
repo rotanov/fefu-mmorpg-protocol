@@ -224,7 +224,7 @@ See [Logout](#logout)
 A request for server to provide information for a map area around the client's
 player. Such information MUST be provided via keys `map` and `objects`.
 
-TBD: If size of such an area must be standardized
+TBD: If size of such area must be standardized
 
 `map` key MUST have a value of an array of array of strings. Such strings are
 decoded via dictionary got using `getDictionary` request. `map` 2d array has
@@ -290,7 +290,7 @@ Tick numbers are required to grow monotonously by `1` for each tick.
 ### Testing
 
 There are a number of request messages available only when server is in the
-testing stage. Such messages are marked with "Testing stage only." If such a
+testing stage. Such messages are marked with "Testing stage only." If such 
 message to be sent while testing stage is not active, server MUST respond with
 `"result": "badAction"`.
 
