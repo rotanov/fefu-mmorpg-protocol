@@ -46,22 +46,26 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
         - [Move](#move)
             - [Request](#request-6)
             - [Response](#response-6)
+        - [Attack](#attack)
+            - [Request](#request-7)
         - [Tick](#tick)
+            - [Possible Events](#possible-events)
+                - [Attack](#attack-1)
     - [Testing](#testing)
         - [Start Testing](#start-testing)
-            - [Request](#request-7)
+            - [Request](#request-8)
             - [Response](#response-7)
         - [Stop Testing](#stop-testing)
-            - [Request](#request-8)
+            - [Request](#request-9)
             - [Response](#response-8)
         - [Set Up Constants](#set-up-constants)
-            - [Request](#request-9)
+            - [Request](#request-10)
             - [Response](#response-9)
         - [Get Constants](#get-constants)
-            - [Request](#request-10)
+            - [Request](#request-11)
             - [Response](#response-10)
         - [Set Up Map](#set-up-map)
-            - [Request](#request-11)
+            - [Request](#request-12)
             - [Response](#response-11)
 
 ### Requirements
@@ -190,10 +194,20 @@ In case of successful response `result` key of respone MUST have a value `ok`.
 
     result: [ok, badSid, badId]
     id: <actor's id>
-    type: <actor's type>
-    login: <player's login>
+    type: <actor's type. It may be one of `player`, `monster`, `item` for now>
+    login: <player's login. MAY be present if `type` is `player`>
     x: <x coordinate>
     y: <y coordinate>
+
+If type is either `player` or `monster` response MAY contain the following:
+
+    health: <actor's current number of health points>
+    maxHealth: <actor's maximum number of health points>
+
+If `type` is `monster` response MAY contain these fields:
+    
+    name: <name of a monster>
+    mobType: <string describing the type of a monster>
 
 #### Get Dictionary
 
@@ -244,10 +258,21 @@ row-major order. E.g. for a 4x6 (4 rows, 6 columns) map area:
 array MUST describe a single actor present at the provided area in the following
 form:
 
-    type: <actor's type>
+    type: <actor's type. May be one of `player`, `monster`, `item`>
     id: <actor's id>
     x: <global map space x coordinate of actor>
     y: <global map space y coordinate of actor>
+
+If `type` is not `item` actor description MUST contain:
+
+    health: <actor's current number of health points>
+    maxHealth: <actor's maximum number of health points>
+
+If `type` is `monster` actor description MUST contain these fields:
+
+    mobType: <string describing the type of a monster>
+    
+TBD: list of possible mobType values
 
 ##### Request
 
@@ -276,16 +301,52 @@ TBD:
 - If `result` must be distinct from `ok` in case of player trying to move in the
 direction of wall right before him
 
+#### Attack
+
+Request of a clent performing an attack at a specified coordinates in a global
+map space.
+
+##### Request
+
+    action: attack
+    target: <an array of two elements - x, y coordinates of an attack>
+
 #### Tick
 
 For each simulation tick server MUST broadcast current tick to all the clients.
 Tick message is neither request nor response message therefore implicit rules
 for keys `sid`, `action`, `result` don't apply to it.
 
-Tick message is a JSON object with a single key `tick` with a value of
-broadcasted tick number.
+Tick message is a JSON object. It MUST contain key `tick` with a value of server
+current tick number.
 
 Tick numbers are required to grow monotonously by `1` for each tick.
+
+Tick message MAY also contain an array `events` of JSON objects describing
+events occured at a given tick. 
+
+Server MAY decide to send some events only for a subset of clients. e.g. attack
+action only to ones for which it is visible.
+
+Presently there is only one event `attack`.
+
+##### Possible Events
+
+###### Attack
+
+TBD: what a `blowType` actually means
+TBD: should we really send target id or it may be reasonable to sent [x, y] of
+an attack
+TBD: what should be sent if there are multiple targets for a single attack
+
+Field `killed` may be omitted if it is `false`.
+
+    event: "attack"
+    attacker: <attacker's id>
+    target: <target's id>
+    blowType: <string describing attack type e.g. "CLAW", "BITE", etc>
+    dealtDamage: <damage dealt>
+    killed: <whether target was killed or not>
 
 ### Testing
 
