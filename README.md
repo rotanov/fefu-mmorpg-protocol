@@ -14,6 +14,7 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
 
 # Table of Contents
 
+- [FEFU MMORPG Protocol — FEMP/0.2](#fefu-mmorpg-protocol-—-femp02)
 - [Abstract](#abstract)
 - [Status of This Memo](#status-of-this-memo)
 - [Table of Contents](#table-of-contents)
@@ -66,6 +67,8 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
     - [Set Up Map](#set-up-map)
         - [Request](#request-12)
         - [Response](#response-11)
+- [Data Invariants](#data-invariants)
+    - [Game Objects](#game-objects)
 
 # Requirements
 
@@ -467,3 +470,23 @@ those found in [Dictionary](#get-dictionary).
 ### Response
 
     result: [ok, badMap, badAction]
+
+# Data Invariants
+
+This section describes allowable values for data involved.
+
+All units in game are measured in tiles, assuming one tile width and height to
+be 1.0. Upscaling this for rendering is up to client.
+
+## Game Objects
+
+Game Objects are the contents of `actors` array of `look` response. Items in
+inventory of creatures are also game objects. Hovewer those don't appear in
+`look`'s `actors`.
+
+The `type` of game object may be one of:
+    - `player`
+    - `monster`
+    - `item`
+
+Player's and monster's size MUST be 1.0. Size of item is unspecified for now.
