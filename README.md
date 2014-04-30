@@ -1,10 +1,10 @@
-## FEFU MMORPG Protocol — FEMP/0.2
+# FEFU MMORPG Protocol — FEMP/0.2
 
-### Abstract
+# Abstract
 
 Specification of client-server communication for FEFU MMORPG training project.
 
-### Status of This Memo
+# Status of This Memo
 
 This document is a product of collaborative design by students of group B8303A
 of Far Eastern Federal University (FEFU) of Russian Federation.
@@ -12,63 +12,62 @@ The purpose of this document is to provide students of group B8303A with unified
 standard of client-server communication for particular computer science course 
 of second semester of 2013-2014 academic year by https://github.com/klenin/
 
-### Table of Contents
+# Table of Contents
 
-- [FEFU MMORPG Protocol — FEMP/0.2](#fefu-mmorpg-protocol-—-femp02)
-    - [Abstract](#abstract)
-    - [Status of This Memo](#status-of-this-memo)
-    - [Table of Contents](#table-of-contents)
-    - [Requirements](#requirements)
-    - [Introduction](#introduction)
-    - [Terminology](#terminology)
-    - [Authorization](#authorization)
-        - [Register](#register)
-            - [Request](#request)
-            - [Response](#response)
-        - [Login](#login)
-            - [Request](#request-1)
-            - [Response](#response-1)
-        - [Logout](#logout)
-            - [Request](#request-2)
-            - [Response](#response-2)
-    - [Game Interaction](#game-interaction)
-        - [Common Invariants](#common-invariants)
-        - [Examine](#examine)
-            - [Request](#request-3)
-            - [Response](#response-3)
-        - [Get Dictionary](#get-dictionary)
-            - [Request](#request-4)
-            - [Response](#response-4)
-        - [Logout](#logout-1)
-        - [Look](#look)
-            - [Request](#request-5)
-            - [Response](#response-5)
-        - [Move](#move)
-            - [Request](#request-6)
-            - [Response](#response-6)
-        - [Attack](#attack)
-            - [Request](#request-7)
-        - [Tick](#tick)
-            - [Possible Events](#possible-events)
-                - [Attack](#attack-1)
-    - [Testing](#testing)
-        - [Start Testing](#start-testing)
-            - [Request](#request-8)
-            - [Response](#response-7)
-        - [Stop Testing](#stop-testing)
-            - [Request](#request-9)
-            - [Response](#response-8)
-        - [Set Up Constants](#set-up-constants)
-            - [Request](#request-10)
-            - [Response](#response-9)
-        - [Get Constants](#get-constants)
-            - [Request](#request-11)
-            - [Response](#response-10)
-        - [Set Up Map](#set-up-map)
-            - [Request](#request-12)
-            - [Response](#response-11)
+- [Abstract](#abstract)
+- [Status of This Memo](#status-of-this-memo)
+- [Table of Contents](#table-of-contents)
+- [Requirements](#requirements)
+- [Introduction](#introduction)
+- [Terminology](#terminology)
+- [Authorization](#authorization)
+    - [Register](#register)
+        - [Request](#request)
+        - [Response](#response)
+    - [Login](#login)
+        - [Request](#request-1)
+        - [Response](#response-1)
+    - [Logout](#logout)
+        - [Request](#request-2)
+        - [Response](#response-2)
+- [Game Interaction](#game-interaction)
+    - [Common Invariants](#common-invariants)
+    - [Examine](#examine)
+        - [Request](#request-3)
+        - [Response](#response-3)
+    - [Get Dictionary](#get-dictionary)
+        - [Request](#request-4)
+        - [Response](#response-4)
+    - [Logout](#logout-1)
+    - [Look](#look)
+        - [Request](#request-5)
+        - [Response](#response-5)
+    - [Move](#move)
+        - [Request](#request-6)
+        - [Response](#response-6)
+    - [Attack](#attack)
+        - [Request](#request-7)
+    - [Tick](#tick)
+        - [Possible Events](#possible-events)
+            - [Attack](#attack-1)
+- [Testing](#testing)
+    - [Start Testing](#start-testing)
+        - [Request](#request-8)
+        - [Response](#response-7)
+    - [Stop Testing](#stop-testing)
+        - [Request](#request-9)
+        - [Response](#response-8)
+    - [Set Up Constants](#set-up-constants)
+        - [Request](#request-10)
+        - [Response](#response-9)
+    - [Get Constants](#get-constants)
+        - [Request](#request-11)
+        - [Response](#response-10)
+    - [Set Up Map](#set-up-map)
+        - [Request](#request-12)
+        - [Response](#response-11)
 
-### Requirements
+# Requirements
 
 The key words `MUST`, `MUST NOT`, `REQUIRED`, `SHALL`, `SHALL NOT`, `SHOULD`,
 `SHOULD NOT`, `RECOMMENDED`, `MAY`, and `OPTIONAL` in this document are to be
@@ -81,7 +80,7 @@ level requirements for its protocols is said to be `unconditionally compliant`;
 one that satisfies all the MUST level requirements but not all the SHOULD level
 requirements for its protocols is said to be `conditionally compliant.`
 
-### Introduction
+# Introduction
 
 Client and server communicate with request and response messages.
 Each message MUST be represented by a single JSON object.
@@ -105,7 +104,7 @@ with regard to value of 'action' key then server MUST respond with a key
 Both request and response messages MAY contain any other key/value pairs
 specific for particular request/response.
 
-### Terminology
+# Terminology
 
 TBD — http://en.wiktionary.org/wiki/TBD
 
@@ -113,13 +112,13 @@ Key in context of json message stands for name in name/value pair which is the
 same as key/value pair or attribute/value pair. JSON RFC uses `name` in such
 context.
 
-### Authorization
+# Authorization
 
 An authorization stage of communication MUST use HTTP/1.1 as an underlying
 transport. A method of HTTP request MUST be POST. Message MUST be HTTP
 message-body. Content-Type header of HTTP response MUST be `application/json`.
 
-#### Register
+## Register
 
 The requirements for user credentials are as follows:
 
@@ -130,48 +129,48 @@ password: `.{6, 36}` i.e. minimal length is 6 symbols and maximum length is
 36 symbols. Any character is allowed except characters indexed from 0 to 31
 in ASCII.
 
-##### Request
+### Request
 
     action: register
     login: <new client's login> 
     password: <new client's password>
 
-##### Response
+### Response
 
     result: [ok, badPassword, badLogin, loginExists]
 
-#### Login
+## Login
 
-##### Request
+### Request
  
     action: login
     login: <client's login> 
     password: <client's password>
 
-##### Response
+### Response
 
     result: [ok, invalidCredentials]
     sid: <string representation of session identifier>
     webSocket: <WebSocket server URI>
     id: <player ID for use with Game Interaction requests>
 
-#### Logout
+## Logout
 
-##### Request
+### Request
 
     action: logout
     sid: <client's sid>
 
-##### Response
+### Response
 
     result: [ok, badSid]
 
-### Game Interaction
+# Game Interaction
 
 All communication other than authorization stage (with an exception of logout)
 is done via WebSocket protocol as underlying transport.
 
-#### Common Invariants
+## Common Invariants
 
 Those rules apply to any client-server communication of [Game Interaction](#game-interaction)
 section. Explicit inclusion of these rules may be ommited. If there is an
@@ -183,14 +182,14 @@ with a string value of client sid provided by server. In case of invalid sid the
 
 In case of successful response `result` key of respone MUST have a value `ok`.
 
-#### Examine
+## Examine
 
-##### Request
+### Request
 
     action: examine
     id: <actor's identifier>
 
-##### Response
+### Response
 
     result: [ok, badSid, badId]
     id: <actor's id>
@@ -209,7 +208,7 @@ If `type` is `monster` response MAY contain these fields:
     name: <name of a monster>
     mobType: <string describing the type of a monster>
 
-#### Get Dictionary
+## Get Dictionary
 
 Dictionary is a json object describing mapping from game map cell (recieved via
 look action) to string value of cell type e.g.
@@ -221,19 +220,19 @@ look action) to string value of cell type e.g.
 }
 ```
 
-##### Request
+### Request
 
     action: getDictionary
 
-##### Response
+### Response
 
     dictionary: {...}
 
-#### Logout
+## Logout
 
 See [Logout](#logout)
 
-#### Look
+## Look
 
 A request for server to provide information for a map area around the client's
 player. Such information MUST be provided via keys `map` and `objects`.
@@ -274,26 +273,26 @@ If `type` is `monster` actor description MUST contain these fields:
     
 TBD: list of possible mobType values
 
-##### Request
+### Request
 
     action: look
 
-##### Response
+### Response
 
     map: [[...]]
     actors: [{...}, ...]
     x: <global map space x coordinate of player's center>
     y: <global map space y coordinate of player's center>
 
-#### Move
+## Move
     
-##### Request
+### Request
 
     action: move
     direction: [west, north, east, south]
     tick: <tick number for move action>
 
-##### Response
+### Response
 
 TBD:
 
@@ -301,17 +300,17 @@ TBD:
 - If `result` must be distinct from `ok` in case of player trying to move in the
 direction of wall right before him
 
-#### Attack
+## Attack
 
 Request of a clent performing an attack at a specified coordinates in a global
 map space.
 
-##### Request
+### Request
 
     action: attack
     target: <an array of two elements - x, y coordinates of an attack>
 
-#### Tick
+## Tick
 
 For each simulation tick server MUST broadcast current tick to all the clients.
 Tick message is neither request nor response message therefore implicit rules
@@ -330,14 +329,15 @@ action only to ones for which it is visible.
 
 Presently there is only one event `attack`.
 
-##### Possible Events
+### Possible Events
 
-###### Attack
+#### Attack
 
-TBD: what a `blowType` actually means
-TBD: should we really send target id or it may be reasonable to sent [x, y] of
+TBD:
+    - what a `blowType` actually means
+    - should we really send target id or it may be reasonable to sent [x, y] of
 an attack
-TBD: what should be sent if there are multiple targets for a single attack
+    - what should be sent if there are multiple targets for a single attack
 
 Field `killed` may be omitted if it is `false`.
 
@@ -348,14 +348,14 @@ Field `killed` may be omitted if it is `false`.
     dealtDamage: <damage dealt>
     killed: <whether target was killed or not>
 
-### Testing
+# Testing
 
 There are a number of request messages available only when server is in the
 testing stage. Such messages are marked with "Testing stage only." If such 
 message to be sent while testing stage is not active, server MUST respond with
 `"result": "badAction"`.
 
-#### Start Testing
+## Start Testing
 
 This request MUST be sent each time at the beginning of testing stage.
 Once this message is responded with `"result": "ok"`, it is valid to state
@@ -364,15 +364,15 @@ that testing stage is now active.
 It is invalid to request Start Testing when testing stage is already active. In
 such case request MUST be answered with `"result": "badAction"`.
 
-##### Request
+### Request
 
     action: startTesting
 
-##### Response
+### Response
 
     result: [ok, badAction]
 
-#### Stop Testing
+## Stop Testing
 
 Testing stage only.
 
@@ -380,15 +380,15 @@ Each testing stage MUST be closed with this request. Once responded with
 `"result": "ok"` it is valid to state that server is no more in the testing
 stage.
 
-##### Request
+### Request
 
     action: stopTesting
 
-##### Response
+### Response
 
     result: [ok, badAction]
 
-#### Set Up Constants
+## Set Up Constants
 
 Testing stage only.
 
@@ -406,7 +406,7 @@ reference set of constants for the purposes of cross server testing:
 }
 ```
 
-##### Request
+### Request
 
 ```
 action: setUpConst
@@ -417,19 +417,19 @@ screenRowCount: <a number of tile rows in a rectangle get via `look`>
 screenColumnCount: <a number of tile columns in a rectangle get via `look`>
 ```
 
-##### Response
+### Response
 
     result: [ok, badAction]
 
-#### Get Constants
+## Get Constants
 
 Get a set of current constant values.
 
-##### Request
+### Request
 
     action: getConst
 
-##### Response
+### Response
 
 ```
 result: ok
@@ -440,7 +440,7 @@ screenRowCount: <value>
 screenColumnCount: <value>
 ```
 
-#### Set Up Map
+## Set Up Map
 
 Testing stage only.
 
@@ -449,7 +449,7 @@ uploaded map to be invalid (e.g. malformed map array or wrong cell value) then
 the request MUST be responded with `badMap`. Innermost values of `map` key are
 those found in [Dictionary](#get-dictionary).
 
-##### Request
+### Request
 
 ```json
 {
@@ -464,6 +464,6 @@ those found in [Dictionary](#get-dictionary).
 }
 ```
 
-##### Response
+### Response
 
     result: [ok, badMap, badAction]
