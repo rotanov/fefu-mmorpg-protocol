@@ -1,4 +1,4 @@
-# FEFU MMORPG Protocol — FEMP/0.2
+# FEFU MMORPG Protocol — FEMP/0.3
 
 # Abstract
 
@@ -14,7 +14,7 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
 
 # Table of Contents
 
-- [FEFU MMORPG Protocol — FEMP/0.2](#fefu-mmorpg-protocol-—-femp02)
+- [FEFU MMORPG Protocol — FEMP/0.3](#fefu-mmorpg-protocol-—-femp03)
 - [Abstract](#abstract)
 - [Status of This Memo](#status-of-this-memo)
 - [Table of Contents](#table-of-contents)
@@ -22,53 +22,73 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
 - [Introduction](#introduction)
 - [Terminology](#terminology)
 - [Authorization](#authorization)
-    - [Register](#register)
-        - [Request](#request)
-        - [Response](#response)
-    - [Login](#login)
-        - [Request](#request-1)
-        - [Response](#response-1)
-    - [Logout](#logout)
-        - [Request](#request-2)
-        - [Response](#response-2)
+  - [Register](#register)
+    - [Request](#request)
+    - [Response](#response)
+  - [Login](#login)
+    - [Request](#request-1)
+    - [Response](#response-1)
+  - [Logout](#logout)
+    - [Request](#request-2)
+    - [Response](#response-2)
 - [Game Interaction](#game-interaction)
-    - [Common Invariants](#common-invariants)
-    - [Examine](#examine)
-        - [Request](#request-3)
-        - [Response](#response-3)
-    - [Get Dictionary](#get-dictionary)
-        - [Request](#request-4)
-        - [Response](#response-4)
-    - [Logout](#logout-1)
-    - [Look](#look)
-        - [Request](#request-5)
-        - [Response](#response-5)
-    - [Move](#move)
-        - [Request](#request-6)
-        - [Response](#response-6)
-    - [Attack](#attack)
-        - [Request](#request-7)
-    - [Tick](#tick)
-        - [Possible Events](#possible-events)
-            - [Attack](#attack-1)
+  - [Common Invariants](#common-invariants)
+  - [Attack](#attack)
+    - [Request](#request-3)
+  - [Destroy Item](#destroy-item)
+    - [Request](#request-4)
+  - [Drop](#drop)
+    - [Request](#request-5)
+    - [Response](#response-3)
+  - [Equip](#equip)
+    - [Request](#request-6)
+    - [Response](#response-4)
+  - [Examine](#examine)
+    - [Request](#request-7)
+    - [Response](#response-5)
+  - [Get Dictionary](#get-dictionary)
+    - [Request](#request-8)
+    - [Response](#response-6)
+  - [Logout](#logout-1)
+  - [Look](#look)
+    - [Request](#request-9)
+    - [Response](#response-7)
+  - [Move](#move)
+    - [Request](#request-10)
+  - [Pick Up](#pick-up)
+    - [Request](#request-11)
+  - [Tick](#tick)
+    - [Possible Events](#possible-events)
+      - [Attack](#attack-1)
+      - [Effect](#effect)
+  - [Unequip](#unequip)
+    - [Request](#request-12)
+  - [Use](#use)
+    - [Request](#request-13)
+    - [Response](#response-8)
 - [Testing](#testing)
-    - [Start Testing](#start-testing)
-        - [Request](#request-8)
-        - [Response](#response-7)
-    - [Stop Testing](#stop-testing)
-        - [Request](#request-9)
-        - [Response](#response-8)
-    - [Set Up Constants](#set-up-constants)
-        - [Request](#request-10)
-        - [Response](#response-9)
-    - [Get Constants](#get-constants)
-        - [Request](#request-11)
-        - [Response](#response-10)
-    - [Set Up Map](#set-up-map)
-        - [Request](#request-12)
-        - [Response](#response-11)
+  - [Start Testing](#start-testing)
+    - [Request](#request-14)
+    - [Response](#response-9)
+  - [Stop Testing](#stop-testing)
+    - [Request](#request-15)
+    - [Response](#response-10)
+  - [Set Up Constants](#set-up-constants)
+    - [Request](#request-16)
+    - [Response](#response-11)
+  - [Get Constants](#get-constants)
+    - [Request](#request-17)
+    - [Response](#response-12)
+  - [Set Up Map](#set-up-map)
+    - [Request](#request-18)
+    - [Response](#response-13)
 - [Data Invariants](#data-invariants)
-    - [Game Objects](#game-objects)
+  - [Game Objects](#game-objects)
+    - [Player](#player)
+      - [Slots](#slots)
+    - [Monster](#monster)
+    - [Item](#item)
+    - [Projectile](#projectile)
 
 # Requirements
 
@@ -185,6 +205,58 @@ with a string value of client sid provided by server. In case of invalid sid the
 
 In case of successful response `result` key of respone MUST have a value `ok`.
 
+## Attack
+
+Request of a clent performing an attack at a specified coordinates in a global
+map space.
+
+### Request
+
+    action: attack
+    target: <an array of two elements - x, y coordinates of an attack>
+
+## Destroy Item
+
+Destroys an item. It is possible if distance between item and player centers
+doesn't exceed pickUpRadius or item is already in player's inventory. Otherwise
+result MUST be `badId`. If object with this id is not an item result MUST be
+`badId`.
+
+### Request
+
+    action: destroyItem
+    id: <item's id>
+
+## Drop
+
+Drop item from inventory to the ground.
+
+### Request
+
+    action: drop
+    id: <id>
+
+### Response
+
+    result: [ok, badSid, badId]
+
+## Equip
+
+Equips item of given id onto specified slot. If it is impossible to equip this
+item onto that slot badSlot is returned. If slot is already occupied then item
+which is already there gets automatically unequipped and takes of the item being
+equipped.
+
+### Request
+
+    action: equip
+    id: <item's id>
+    slot: <slot to equip onto>
+
+### Response
+
+    result: [ok, badId, badSid, badSlot]
+
 ## Examine
 
 ### Request
@@ -196,7 +268,7 @@ In case of successful response `result` key of respone MUST have a value `ok`.
 
     result: [ok, badSid, badId]
     id: <actor's id>
-    type: <actor's type. It may be one of `player`, `monster`, `item` for now>
+    type: <actor's type. One of `player`, `monster`, `item`, `projectile`>
     login: <player's login. MAY be present if `type` is `player`>
     x: <x coordinate>
     y: <y coordinate>
@@ -217,6 +289,7 @@ Dictionary is a json object describing mapping from game map cell (recieved via
 look action) to string value of cell type e.g.
 
 ```json
+"dictionary":
 {
     ".": "grass",
     "#": "wall"
@@ -260,7 +333,7 @@ row-major order. E.g. for a 4x6 (4 rows, 6 columns) map area:
 array MUST describe a single actor present at the provided area in the following
 form:
 
-    type: <actor's type. May be one of `player`, `monster`, `item`>
+    type: <actor's type. One of `player`, `monster`, `item`, `projectile`>
     id: <actor's id>
     x: <global map space x coordinate of actor>
     y: <global map space y coordinate of actor>
@@ -288,6 +361,9 @@ TBD: list of possible mobType values
     y: <global map space y coordinate of player's center>
 
 ## Move
+
+If total weight of items in Player's inventory exceeds this Player's carrying
+capacity then result is `tooHeavy`.
     
 ### Request
 
@@ -295,23 +371,21 @@ TBD: list of possible mobType values
     direction: [west, north, east, south]
     tick: <tick number for move action>
 
-### Response
+## Pick Up
 
-TBD:
+Request for client player to pick up an item with given ID. Object with this ID
+MUST have type `item` and distance between player's center and item's center
+MUST be less or equal than constant pickUpRadius. Otherwise nothing is picked up
+and result is `badId`.
 
-- If client should expect `"result": "ok"` or even any response at all
-- If `result` must be distinct from `ok` in case of player trying to move in the
-direction of wall right before him
+If total weight of Player's inventory exceeds Player's carrying capacity after
+picking up an item and it is possible to pick up item then result MUST be
+`tooHeavy`.
 
-## Attack
+### Request 
 
-Request of a clent performing an attack at a specified coordinates in a global
-map space.
-
-### Request
-
-    action: attack
-    target: <an array of two elements - x, y coordinates of an attack>
+    action: pickUp
+    id: <item-to-pick-up's id>
 
 ## Tick
 
@@ -336,11 +410,8 @@ Presently there is only one event `attack`.
 
 #### Attack
 
-TBD:
-    - what a `blowType` actually means
-    - should we really send target id or it may be reasonable to sent [x, y] of
-an attack
-    - what should be sent if there are multiple targets for a single attack
+If there are multiple targets for a single attack then server MUST produce
+multiple `attack` events for each target.
 
 Field `killed` may be omitted if it is `false`.
 
@@ -350,6 +421,46 @@ Field `killed` may be omitted if it is `false`.
     blowType: <string describing attack type e.g. "CLAW", "BITE", etc>
     dealtDamage: <damage dealt>
     killed: <whether target was killed or not>
+
+#### Effect
+
+    x: <global-space x coordinate of effect center>
+    y: <global-space y coordinate of effect center>
+    radius: <visual effect radius>
+    type: <type of effect>
+
+## Unequip
+
+Unequips item with given id. `badId` is returned if there is no such item
+equipped on the client.
+
+### Request
+
+    action: unequip
+    id: <item's id>
+
+## Use
+
+Use an object by given id. In general object can be used if it is contained in
+the player's inventory or equipped onto player. Objects could also 
+
+### Request
+
+    action: use
+    id: <item's id>
+
+Optional data for various items:
+
+    x: <global map space x coordinate of target point>
+    y: <global map space y coordinate of target point>
+    ammoId: <id of an ammo to use with this weapon>
+
+This section is to be completed.
+
+### Response
+
+    result: [ok, badId, badSlot, badAmmoId, badPos]
+    message: <text describing what's happened as a result of usage>
 
 # Testing
 
@@ -405,7 +516,8 @@ reference set of constants for the purposes of cross server testing:
     "slideThreshold": 0.1,
     "ticksPerSecond": 60,
     "screenRowCount": 7,
-    "screenColumnCount": 9
+    "screenColumnCount": 9,
+    "pickUpRadius": 1.5
 }
 ```
 
@@ -413,11 +525,12 @@ reference set of constants for the purposes of cross server testing:
 
 ```
 action: setUpConst
-playerVelocity: <a portion of tile player travels through the world per second>
-slideThreshold: <a portion of tile which gets ignored when moving towards it>
-ticksPerSecond: <a number of simulation cycles per second>
-screenRowCount: <a number of tile rows in a rectangle get via `look`>
-screenColumnCount: <a number of tile columns in a rectangle get via `look`>
+playerVelocity: <portion of tile player travels through the world per second>
+slideThreshold: <portion of tile which gets ignored when moving towards it>
+ticksPerSecond: <number of simulation cycles per second>
+screenRowCount: <number of tile rows in a rectangle get via `look`>
+screenColumnCount: <number of tile columns in a rectangle get via `look`>
+pickUpRadius: <maximum distance between player's center and item's one for latter to be picked up>
 ```
 
 ### Response
@@ -441,6 +554,7 @@ slideThreshold: <value>
 ticksPerSecond: <value>
 screenRowCount: <value>
 screenColumnCount: <value>
+pickUpRadius: <value>
 ```
 
 ## Set Up Map
@@ -488,5 +602,42 @@ The `type` of game object may be one of:
     - `player`
     - `monster`
     - `item`
+    - `projectile`
 
-Player's and monster's size MUST be 1.0. Size of item is unspecified for now.
+All MUST have square shape therefore size of actor stands for width == height.
+Player's and monster's size MUST be 1. Item's and projectile's size MUST be 0.
+
+### Player
+
+#### Slots
+
+//WIELD - weapon
+//BOW - ranged missle launcher
+//WIELD & BOW are merged into WEAPON
+WEAPON
+LEFT - ring
+RIGHT - ring
+NECK - amulet
+//LIGHT - light source
+BODY - armor
+//OUTER - cloak
+ARM - shield
+HEAD - helmet
+HANDS - gloves
+FEET - boots
+
+### Monster
+
+### Item
+
+Every item MUST have a weight. Number of items in inventory of any Creature
+(Monster or Player) MUST be limited by maximum weight Creature can handle.
+
+If weight of item to be picked up exceeds maximum Player's weight then pickUp
+request MUST result in `tooHeavy`.
+
+If total weight of items in inventory of any Creature somehow exceeds its
+carrying capacity then Creature becomes immobilized. If Player is to be
+immobilized then `move` request MUST result in `tooHeavy`.
+
+### Projectile
