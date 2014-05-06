@@ -611,20 +611,15 @@ Player's and monster's size MUST be 1. Item's and projectile's size MUST be 0.
 
 #### Slots
 
-//WIELD - weapon
-//BOW - ranged missle launcher
-//WIELD & BOW are merged into WEAPON
-WEAPON
-LEFT - ring
-RIGHT - ring
-NECK - amulet
-//LIGHT - light source
-BODY - armor
-//OUTER - cloak
-ARM - shield
-HEAD - helmet
-HANDS - gloves
-FEET - boots
+- WEAPON - merge of WIELD and BOW
+- LEFT - ring
+- RIGHT - ring
+- NECK - amulet
+- BODY - armor
+- ARM - shield
+- HEAD - helmet
+- HANDS - gloves
+- FEET - boots
 
 ### Monster
 
