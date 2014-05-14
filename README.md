@@ -210,6 +210,9 @@ In case of successful response `result` key of respone MUST have a value `ok`.
 Request of a clent performing an attack at a specified coordinates in a global
 map space.
 
+Attack request is deprectaed and will be removed from next version of protocol.
+Use `use` with id of equipped weapon instead.
+
 ### Request
 
     action: attack
@@ -565,6 +568,8 @@ Upload map to server and set it up as currently active. If server assumes
 uploaded map to be invalid (e.g. malformed map array or wrong cell value) then
 the request MUST be responded with `badMap`. Innermost values of `map` key are
 those found in [Dictionary](#get-dictionary).
+
+Minimal size of map is 1x1. Empty map is `badMap`.
 
 ### Request
 
