@@ -280,6 +280,8 @@ If type is either `player` or `monster` response MAY contain the following:
 
     health: <actor's current number of health points>
     maxHealth: <actor's maximum number of health points>
+    mana: <actor's current number of mana points>
+    maxMana: <actor's maximum number of mana points>
 
 If `type` is `monster` response MAY contain these fields:
     
@@ -345,6 +347,8 @@ If `type` is not `item` actor description MUST contain:
 
     health: <actor's current number of health points>
     maxHealth: <actor's maximum number of health points>
+    mana: <actor's current number of mana points>
+    maxMana: <actor's maximum number of mana points>
 
 If `type` is `monster` actor description MUST contain these fields:
 
