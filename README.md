@@ -594,6 +594,119 @@ Minimal size of map is 1x1. Empty map is `badMap`.
 
     result: [ok, badMap, badAction]
 
+## Put Mob
+
+Put specified mob onto the level map.
+
+### Request
+
+    action: "putMob"
+    column: <integer value of column where to put mob>
+    row: <integer value of row where to put mob>
+    characteristics   : { <characteristics*>}
+    inventory : [{item description}, ...]
+    attackRadius : <radius of attack>
+    flags: [<flag_enum1>, ...]
+    race: <mob's race>
+    
+Races: ORC, EVIL, TROLL, GIANT, DEMON, METAL, DRAGON, UNDEAD, ANIMAL, PLAYER
+
+### Response
+
+    result: ok, badPoint
+    id: <generated mob's id>
+
+### PutPlayer
+## Request
+
+    action : "putPlayer"
+    point  : {x : <player's x>, y : <player's y>}
+    characteristics  : { <characteristics*> }
+    inventory : [{item description*}, ...]
+    slots : [ {slot : <slotName>, item : <item description*>}, ... ]
+    attackRadius : <radius of attack>
+
+## Response
+    
+    result : ok, badPoint
+    id     : <generated player's id>
+    
+    
+### PutItem 
+
+## Request
+
+    action : "putItem"
+    point  : {x : <item place x>, y : <item place y>}
+    item   : <item description>
+    
+## Response
+
+    result : ok, badPoint
+    id     : <generated item id>
+
+### Notes
+
+## characteristics
+
+Characteristics are the follows: `HP`, `MP`, `STRENGTH`, `INTELLEGENCE`, `WISDOM`, `DEXTERITY`, 
+`SPEED`, `DEFENSE`, `MAGICK_RESISTANCE`, `CAPACITY`.
+If characteristic is not required for testing it can be omitted.
+
+## Item description
+
+{
+    weight : <item weight>,
+    class  : <item class enum>,
+    type   : <item type enum>,
+    subtype : <item subtype enum>
+    bonuses : [{bonus description*}, ...],
+    effects : [{effect description*}, ...],
+}
+
+Field `subtype` MAY be omitted if one is not required.
+
+classes:    
+    0 - garment
+    1 - food
+    2 - bow
+    
+type:
+    0 - amulet
+    1 - ring
+    2 - armor
+    3 - shield
+    4 - helm
+    5 - gloves
+    6 - boots
+    7 - weapon
+    
+subtype:
+   0 - sword
+   1 - polearms
+   2 - bow
+   
+Note about equipping polearms. If `polearm` or `bow` gets equipped, shield `MUST` gets unquipped.
+   
+## Bonus description
+
+{
+    characteristic : <characteristic modified by bonus>,
+    effectCalculation : <const|percent>,
+    value : <value of bonus>
+}
+
+## Effect description
+
+{
+    characteristic : <characteristic modified by effect>,
+    duration : <effect duration in seconds>,
+    effectType : <onGoing|bonus>
+}
+
+If `effectType` is `onGoing`, effect description object MUST contain fields `characteristic` and `value`; 
+otherwise (effectType is ``bonus`) field `bonus` of type Bonus description MUST persist.
+
 # Data Invariants
 
 This section describes allowable values for data involved.
