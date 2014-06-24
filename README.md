@@ -27,7 +27,6 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
     - [Logout](#logout)
 - [Game Interaction](#game-interaction)
     - [Common Invariants](#common-invariants)
-    - [Attack](#attack)
     - [Destroy Item](#destroy-item)
     - [Drop](#drop)
     - [Equip](#equip)
@@ -185,19 +184,6 @@ with a string value of client sid provided by server. In case of invalid sid the
 `result` key of response MUST have a value of `badSid`.
 
 In case of successful response `result` key of respone MUST have a value `ok`.
-
-## Attack
-
-Request of a clent performing an attack at a specified coordinates in a global
-map space.
-
-Attack request is deprectaed and will be removed from next version of protocol.
-Use `use` with id of equipped weapon instead.
-
-### Request
-
-    action: attack
-    target: <an array of two elements - x, y coordinates of an attack>
 
 ## Destroy Item
 
@@ -394,8 +380,6 @@ events occured at a given tick.
 
 Server MAY decide to send some events only for a subset of clients. e.g. attack
 action only to ones for which it is visible.
-
-Presently there is only one event `attack`.
 
 ### Possible Events
 
