@@ -22,73 +22,54 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
 - [Introduction](#introduction)
 - [Terminology](#terminology)
 - [Authorization](#authorization)
-  - [Register](#register)
-    - [Request](#request)
-    - [Response](#response)
-  - [Login](#login)
-    - [Request](#request-1)
-    - [Response](#response-1)
-  - [Logout](#logout)
-    - [Request](#request-2)
-    - [Response](#response-2)
+    - [Register](#register)
+    - [Login](#login)
+    - [Logout](#logout)
 - [Game Interaction](#game-interaction)
-  - [Common Invariants](#common-invariants)
-  - [Attack](#attack)
-    - [Request](#request-3)
-  - [Destroy Item](#destroy-item)
-    - [Request](#request-4)
-  - [Drop](#drop)
-    - [Request](#request-5)
-    - [Response](#response-3)
-  - [Equip](#equip)
-    - [Request](#request-6)
-    - [Response](#response-4)
-  - [Examine](#examine)
-    - [Request](#request-7)
-    - [Response](#response-5)
-  - [Get Dictionary](#get-dictionary)
-    - [Request](#request-8)
-    - [Response](#response-6)
-  - [Logout](#logout-1)
-  - [Look](#look)
-    - [Request](#request-9)
-    - [Response](#response-7)
-  - [Move](#move)
-    - [Request](#request-10)
-  - [Pick Up](#pick-up)
-    - [Request](#request-11)
-  - [Tick](#tick)
-    - [Possible Events](#possible-events)
-      - [Attack](#attack-1)
-      - [Effect](#effect)
-  - [Unequip](#unequip)
-    - [Request](#request-12)
-  - [Use](#use)
-    - [Request](#request-13)
-    - [Response](#response-8)
+    - [Common Invariants](#common-invariants)
+    - [Attack](#attack)
+    - [Destroy Item](#destroy-item)
+    - [Drop](#drop)
+    - [Equip](#equip)
+    - [Examine](#examine)
+    - [Get Dictionary](#get-dictionary)
+    - [Logout](#logout-1)
+    - [Look](#look)
+    - [Move](#move)
+    - [Pick Up](#pick-up)
+    - [Tick](#tick)
+        - [Possible Events](#possible-events)
+            - [Attack](#attack-1)
+            - [Effect](#effect)
+    - [Unequip](#unequip)
+    - [Use](#use)
 - [Testing](#testing)
-  - [Start Testing](#start-testing)
-    - [Request](#request-14)
-    - [Response](#response-9)
-  - [Stop Testing](#stop-testing)
-    - [Request](#request-15)
-    - [Response](#response-10)
-  - [Set Up Constants](#set-up-constants)
-    - [Request](#request-16)
-    - [Response](#response-11)
-  - [Get Constants](#get-constants)
-    - [Request](#request-17)
-    - [Response](#response-12)
-  - [Set Up Map](#set-up-map)
-    - [Request](#request-18)
-    - [Response](#response-13)
+    - [Get Constants](#get-constants)
+    - [Put Item](#put-item)
+    - [Put Mob](#put-mob)
+    - [Put Player](#put-player)
+    - [Set Up Constants](#set-up-constants)
+    - [Set Up Map](#set-up-map)
+    - [Start Testing](#start-testing)
+    - [Stop Testing](#stop-testing)
 - [Data Invariants](#data-invariants)
-  - [Game Objects](#game-objects)
+    - [Game Objects](#game-objects)
     - [Player](#player)
-      - [Slots](#slots)
+        - [Slots](#slots)
     - [Monster](#monster)
     - [Item](#item)
+        - [Item Description](#item-description)
+            - [Item Class](#item-class)
+            - [Item Type](#item-type)
+            - [Item Subtype](#item-subtype)
+            - [Bonus description](#bonus-description)
+            - [Effect description](#effect-description)
+                - [Ongoing Effect Description](#ongoing-effect-description)
+                - [Bonus Effect Description](#bonus-effect-description)
     - [Projectile](#projectile)
+    - [Race](#race)
+    - [Flags](#flags)
+    - [Stats](#stats)
 
 # Requirements
 
@@ -131,7 +112,7 @@ specific for particular request/response.
 
 TBD — http://en.wiktionary.org/wiki/TBD
 
-Key in context of json message stands for name in name/value pair which is the
+Key in context of JSON message stands for name in name/value pair which is the
 same as key/value pair or attribute/value pair. JSON RFC uses `name` in such
 context.
 
@@ -160,7 +141,7 @@ in ASCII.
 
 ### Response
 
-    result: [ok, badPassword, badLogin, loginExists]
+    result: one of: ok, badPassword, badLogin, loginExists
 
 ## Login
 
@@ -172,7 +153,7 @@ in ASCII.
 
 ### Response
 
-    result: [ok, invalidCredentials]
+    result: one of: ok, invalidCredentials
     sid: <string representation of session identifier>
     webSocket: <WebSocket server URI>
     id: <player ID for use with Game Interaction requests>
@@ -186,7 +167,7 @@ in ASCII.
 
 ### Response
 
-    result: [ok, badSid]
+    result: one of: ok, badSid
 
 # Game Interaction
 
@@ -241,7 +222,7 @@ Drop item from inventory to the ground.
 
 ### Response
 
-    result: [ok, badSid, badId]
+    result: one of: ok, badSid, badId
 
 ## Equip
 
@@ -249,6 +230,9 @@ Equips item of given id onto specified slot. If it is impossible to equip this
 item onto that slot badSlot is returned. If slot is already occupied then item
 which is already there gets automatically unequipped and takes of the item being
 equipped.
+
+When equipping a weapon of subtype `polearm` or `bow` while wielding a `shield`
+— shield MUST be unequipped automatically.
 
 ### Request
 
@@ -258,7 +242,7 @@ equipped.
 
 ### Response
 
-    result: [ok, badId, badSid, badSlot]
+    result: one of: ok, badId, badSid, badSlot
 
 ## Examine
 
@@ -269,12 +253,12 @@ equipped.
 
 ### Response
 
-    result: [ok, badSid, badId]
     id: <actor's id>
     type: <actor's type. One of `player`, `monster`, `item`, `projectile`>
     login: <player's login. MAY be present if `type` is `player`>
     x: <x coordinate>
     y: <y coordinate>
+    result: one of: ok, badSid, badId
 
 If type is either `player` or `monster` response MAY contain the following:
 
@@ -290,7 +274,7 @@ If `type` is `monster` response MAY contain these fields:
 
 ## Get Dictionary
 
-Dictionary is a json object describing mapping from game map cell (recieved via
+Dictionary is a JSON object describing mapping from game map cell (recieved via
 look action) to string value of cell type e.g.
 
 ```json
@@ -375,7 +359,7 @@ capacity then result is `tooHeavy`.
 ### Request
 
     action: move
-    direction: [west, north, east, south]
+    direction: one of: west, north, east, south
     tick: <tick number for move action>
 
 ## Pick Up
@@ -466,8 +450,8 @@ This section is to be completed.
 
 ### Response
 
-    result: [ok, badId, badSlot, badAmmoId, badPos]
     message: <text describing what's happened as a result of usage>
+    result: one of: ok, badId, badSlot, badAmmoId, badPos
 
 # Testing
 
@@ -476,38 +460,100 @@ testing stage. Such messages are marked with "Testing stage only." If such
 message to be sent while testing stage is not active, server MUST respond with
 `"result": "badAction"`.
 
-## Start Testing
+## Get Constants
 
-This request MUST be sent each time at the beginning of testing stage.
-Once this message is responded with `"result": "ok"`, it is valid to state
-that testing stage is now active.
-
-It is invalid to request Start Testing when testing stage is already active. In
-such case request MUST be answered with `"result": "badAction"`.
+Get a set of current constant values.
 
 ### Request
 
-    action: startTesting
+    action: getConst
 
 ### Response
 
-    result: [ok, badAction]
+```
+result: ok
+playerVelocity: <value>
+slideThreshold: <value>
+ticksPerSecond: <value>
+screenRowCount: <value>
+screenColumnCount: <value>
+pickUpRadius: <value>
+```
 
-## Stop Testing
+## Put Item 
 
 Testing stage only.
 
-Each testing stage MUST be closed with this request. Once responded with
-`"result": "ok"` it is valid to state that server is no more in the testing
-stage.
-
 ### Request
 
-    action: stopTesting
+    action: "putItem"
+    x: <x coordinate of item's center>
+    y: <y coordinate of item's center>
+    item: {<Item Description*>}
+
+See also:
+
+- [Item Description](#item-description)
 
 ### Response
 
-    result: [ok, badAction]
+    result: ok, badPoint, badItem
+    id: <item's id>
+
+## Put Mob
+
+Testing stage only.
+
+Put specified mob onto the level map.
+
+### Request
+
+    action: "putMob"
+    x: <mob's x coordinate>
+    y: <mob's y coordinate>
+    stats: {<Stats*>}
+    inventory : [{<Item Description*>}, ...]
+    flags: [<Flags*>, ...]
+    race: <Race*>
+
+See also:
+
+- [Stats](#stats)
+- [Item Description](#item-description)
+- [Flags](#flags)
+- [Race](#race)
+
+### Response
+
+    id: <mob's id>
+    result: one of: ok, badPlacing, badFlag, badRace, badInventory, badStats
+
+## Put Player
+
+Testing stage only.
+
+Put player instance onto the level map, specifying inventory, slots and stats.
+Player has `CAN_MOVE` and `CAN_BLOW` flags by default.
+
+### Request
+
+    action: "putPlayer"
+    x: <player's x coordinate>
+    y: <player's y coordinate>
+    inventory: [{<Item Description*>}, ...]
+    slots: {<Slot name. Slots*> : {<Item Description*>}, ...}
+    stats: {<Stats*>}
+
+See also:
+
+- [Stats](#stats)
+- [Item Description](#item-description)
+- [Slots](#slots)
+
+### Response
+
+    id: <player's id>
+    result: one of: ok, badPlacing, badInventory, badSlot, badStats
 
 ## Set Up Constants
 
@@ -542,27 +588,7 @@ pickUpRadius: <maximum distance between player's center and item's one for latte
 
 ### Response
 
-    result: [ok, badAction]
-
-## Get Constants
-
-Get a set of current constant values.
-
-### Request
-
-    action: getConst
-
-### Response
-
-```
-result: ok
-playerVelocity: <value>
-slideThreshold: <value>
-ticksPerSecond: <value>
-screenRowCount: <value>
-screenColumnCount: <value>
-pickUpRadius: <value>
-```
+    result: one of: ok, badAction
 
 ## Set Up Map
 
@@ -592,175 +618,44 @@ Minimal size of map is 1x1. Empty map is `badMap`.
 
 ### Response
 
-    result: [ok, badMap, badAction]
+    result: one of: ok, badMap, badAction
 
-## Put Mob
+## Start Testing
 
-Put specified mob onto the level map.
+This request MUST be sent each time at the beginning of testing stage.
+Once this message is responded with `"result": "ok"`, it is valid to state
+that testing stage is now active.
+
+It is invalid to request Start Testing when testing stage is already active. In
+such case request MUST be answered with `"result": "badAction"`.
 
 ### Request
 
-```json
-    action: "putMob"
-    x: <mob's x coordinate>
-    y: <mob's y coordinate>
-    characteristics : { <characteristics*>}
-    inventory : [{item description}, ...]
-    flags: [<flag1>, ...]
-    race: <mob's race>
-```
-Races: ORC, EVIL, TROLL, GIANT, DEMON, METAL, DRAGON, UNDEAD, ANIMAL, PLAYER.
-Races taken from Angband (except PLAYER that added by Mark).
-Flags are follows: CAN_MOVE, CAN_BLOW, HATE_{any race flag}.
-Flags in origin: NEVER_MOVE, NEVER_BLOW and many others.
-If mob hasn't flag NEVER_MOVE (NEVER_BLOW), it has CAN_MOVE (CAN_BLOW) flag by default. 
-Otherwise, if mob has never-flag in angband, it hasn't corresponding flag in our MMO.
-HATE-Flags added by our team.
+    action: startTesting
 
 ### Response
 
-```json
-    result: ok, badPoint, badFlag, badRace, badInventory
-    id: <generated mob's id>
-```
+    result: one of: ok, badAction
 
-### PutPlayer
+## Stop Testing
 
-Puts player instance to map with specified inventory, slots and characteristics.
-Player has CAN_MOVE, CAN_BLOW flags by default.
+Testing stage only.
 
-## Request
+Each testing stage MUST be closed with this request. Once responded with
+`"result": "ok"` it is valid to state that server is no more in the testing
+stage.
 
-```json
-    action : "putPlayer"
-    x : <player's x>
-	y : <player's y>
-    characteristics  : { <characteristics*> }
-    inventory : [{item description*}, ...]
-    slots : { <slotName> : <item description*> }
-```
+### Request
 
-## Response
+    action: stopTesting
 
-```json
-    result : ok, badPoint, badInventory, badSlot
-    id     : <generated player's id>
-```
-    
-### PutItem 
+### Response
 
-## Request
-
-```json
-    action : "putItem"
-    x : <item place x>
-	y : <item place y>
-    item : <item description>
-```
-
-## Response
-
-```json
-    result : ok, badPoint, badItem
-    id     : <generated item id>
-```
-
-### Notes
-
-## Characteristics
-
-Characteristic in the Angband: STR, INT, WIS, DEX, CON, SPEED, STEALTH, SEARCH, LIGHT, TUNNEL.
-Characteristics are the follows: `STRENGTH` (STR) , `INTELLEGENCE` (INT), `WISDOM` (WIS), `DEXTERITY` (DEX),
-`SPEED` (SPEED), `DEFENSE`, `MAGICK_RESISTANCE`, `CAPACITY`, `HP`, `MP`.
-If characteristic is not required for testing it can be omitted.
-
-## Item description
-
-```json
-	{
-		weight : <item weight>,
-		class  : <item class enum>,
-		type   : <item type enum>,
-		subtype : <item subtype enum>
-		bonuses : [{bonus description*}, ...],
-		effects : [{effect description*}, ...],
-	}
-```
-
-Field `subtype` MAY be omitted if one is not required.
-
-classes:    
-    0 - garment
-    1 - food
-    2 - bow
-    
-type:
-    0 - amulet
-    1 - ring
-    2 - armor
-    3 - shield
-    4 - helm
-    5 - gloves
-    6 - boots
-    7 - weapon
-    
-subtype:
-   0 - sword
-   1 - polearms
-   2 - bow
-   
-Note about equipping polearms. If `polearm` or `bow` gets equipped, shield `MUST` gets unquipped.
-   
-## Bonus description
-
-Json-object represent bonus description.
-There is a one kind of bonuses in Angband: constant bonus to some characteristic.
-Our team added something like it: bonus to any characteristic of active object (mob, player),
-but it can be calculated as percent bonus. So, we have two kinds of bonuses: constant bonus and percent bonus.
-Calculation for constant bonus: <characteristic> += <bonus_val>
-Calculation for percent bonus: <characteristic> += <characteristic> * <bonus_val>
-Value of bonus can be a negative.
-
-```json
-{
-    characteristic : <characteristic modified by bonus>,
-    effectCalculation : <const|percent>,
-    value : <value of bonus>
-}
-```
-
-## Effect description
-
-Json-object respresent effect description.
-Effects in Angband are something hazy, so I invented my own.
-Effect is something, that modified some only characteristic during some time.
-There is two kinds of effects: OnGoingEffect (modify characteristic continuously
-with some fixed value) and BonusEffect (add some bonus).
-
-OnGoingEffect description:
-
-```json
-{
-    characteristic : <characteristic modified by effect>,
-    duration : <effect duration in seconds>,
-    effectType : "onGoing",
-	value : <value of effect>
-}
-```
-
-BonusEffect description:
-
-```json
-{
-	duration : <effect duration in seconds>
-	effectType : "bonus",
-	bonus : <bonus description>
-}
-```
+    result: one of: ok, badAction
 
 # Data Invariants
 
-This section describes allowable values for data involved.
+This section describes involved data.
 
 All units in game are measured in tiles, assuming one tile width and height to
 be 1.0. Upscaling this for rendering is up to client.
@@ -772,34 +667,36 @@ inventory of creatures are also game objects. Hovewer those don't appear in
 `look`'s `actors`.
 
 The `type` of game object may be one of:
-    - `player`
-    - `monster`
-    - `item`
-    - `projectile`
 
-All MUST have square shape therefore size of actor stands for width == height.
-Player's and monster's size MUST be 1. Item's and projectile's size MUST be 0.
+- `player`
+- `monster`
+- `item`
+- `projectile`
 
-### Player
+All of those MUST have square shape. Player's and monster's size MUST be 1.
+Item's and projectile's size MUST be 0.
 
-#### Slots
+## Player
 
-- WEAPON - merge of WIELD and BOW
-- LEFT - ring
-- RIGHT - ring
-- NECK - amulet
-- BODY - armor
-- ARM - shield
-- HEAD - helmet
-- HANDS - gloves
-- FEET - boots
+### Slots
 
-### Monster
+- `WEAPON` - merge of WIELD and BOW
+- `LEFT` - ring
+- `RIGHT` - ring
+- `NECK` - amulet
+- `BODY` - armor
+- `ARM` - shield
+- `HEAD` - helmet
+- `HANDS` - gloves
+- `FEET` - boots
 
-### Item
+## Monster
 
-Every item MUST have a weight. Number of items in inventory of any Creature
-(Monster or Player) MUST be limited by maximum weight Creature can handle.
+## Item
+
+Every item MUST have a weight. Number of items in inventory and slots of any
+Creature (Monster or Player) MUST be limited by maximum weight
+Creature can handle.
 
 If weight of item to be picked up exceeds maximum Player's weight then pickUp
 request MUST result in `tooHeavy`.
@@ -808,4 +705,158 @@ If total weight of items in inventory of any Creature somehow exceeds its
 carrying capacity then Creature becomes immobilized. If Player is to be
 immobilized then `move` request MUST result in `tooHeavy`.
 
-### Projectile
+### Item Description
+
+Some requests from Testing section MAY induce a need to describe an item.
+Item description is a JSON object with the following fields:
+
+    weight: <item's weight>
+    class: <Item Class*>
+    type: <Item Type*>
+    subtype: <Item Subtype*>
+    bonuses : [{<Bonus Description*>}, ...]
+    effects : [{<Effect Description*>}, ...]
+
+Field `subtype` MUST be omitted if type is not `weapon`. Otherwise it MUST be
+present.
+
+#### Item Class
+
+- `garment`
+- `food`
+- `bow`
+
+#### Item Type
+
+- `amulet`
+- `ring`
+- `armor`
+- `shield`
+- `helm`
+- `gloves`
+- `boots`
+- `weapon`
+
+#### Item Subtype
+
+- `sword`
+- `polearm`
+- `bow`
+
+#### Bonus description
+
+TBD: REFORMULATE section
+
+Json-object represent bonus description.
+There is a one kind of bonuses in Angband: constant bonus to some characteristic.
+Our team added something like it: bonus to any characteristic of active object (mob, player),
+but it can be calculated as percent bonus. So, we have two kinds of bonuses: constant bonus and percent bonus.
+Calculation for constant bonus: <characteristic> += <bonus_val>
+Calculation for percent bonus: <characteristic> += <characteristic> * <bonus_val>
+Value of bonus can be a negative.
+
+    characteristic: <characteristic modified by bonus>
+    effectCalculation: <const|percent>
+    value: <value of bonus>
+
+#### Effect description
+
+TBD: REFORMULATE section
+
+Json-object respresent effect description.
+Effects in Angband are something hazy, so I invented my own.
+Effect is something, that modified some only characteristic during some time.
+There is two kinds of effects: OnGoingEffect (modify characteristic continuously
+with some fixed value) and BonusEffect (add some bonus).
+
+##### Ongoing Effect Description
+
+    characteristic : <characteristic modified by effect>
+    duration : <effect duration in seconds>
+    type: "ongoing"
+    value: <value of effect>
+
+##### Bonus Effect Description
+
+    duration: <effect duration in seconds>
+    effectType: "bonus"
+    bonus: <bonus description>
+
+## Projectile
+
+## Race
+
+Both players and monsters have race. Player always have `PLAYER` race.
+
+Possible races are:
+
+- `ORC`
+- `EVIL`
+- `TROLL`
+- `GIANT`
+- `DEMON`
+- `METAL`
+- `DRAGON`
+- `UNDEAD`
+- `ANIMAL`
+- `PLAYER`
+
+Races aree taken from Angband (except for the `PLAYER` race).
+
+## Flags
+
+The following flags are available:
+
+- `CAN_MOVE`
+- `CAN_BLOW`
+- `HATE_<race>`
+
+Angband has many flags. Of our flags `CAN_MOVE` and `CAN_BLOW` have relation to
+Angband's `NEVER_MOVE` and `NEVER_BLOW` ones.
+
+TBD: REFORMULATE the following:
+    If mob hasn't flag NEVER_MOVE (NEVER_BLOW), it has CAN_MOVE (CAN_BLOW)
+    flag by default. Otherwise, if mob has never-flag in angband, it hasn't
+    corresponding flag in our MMO.
+
+Angband have no `HATE_<race>` flag. E.g. `HATE_ORC`, `HATE_PLAYER` etc.
+
+TBD: describe thoroughly what does it mean to `HATE_<race>` etc
+
+## Stats
+
+Both players and monsters have stats. Stat describes to what extent a character
+possesses a natural, in-born characteristic.
+
+Stats in Angband:
+
+- STR
+- INT
+- WIS
+- DEX
+- CON
+- SPEED
+- STEALTH
+- SEARCH
+- LIGHT
+- TUNNEL
+
+Our game does not implement all of those. Instead we are using the following
+stats:
+
+- `STRENGTH` (STR)
+- `INTELLIGENCE` (INT)
+- `WISDOM` (WIS)
+- `DEXTERITY` (DEX)
+- `SPEED` (SPEED)
+- `DEFENSE`
+- `MAGIC_RESISTANCE`
+- `CAPACITY`
+- `HP`
+- `MP`
+
+Some requests from Testing section require to specify stats field. Stats field
+MUST be JSON object containing zero or more of the aforementioned stats.
+
+If any particular stat as well as the whole stats field of request is not
+required for testing it MAY be omitted.
