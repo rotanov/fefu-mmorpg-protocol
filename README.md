@@ -600,69 +600,92 @@ Put specified mob onto the level map.
 
 ### Request
 
+```json
     action: "putMob"
-    column: <integer value of column where to put mob>
-    row: <integer value of row where to put mob>
-    characteristics   : { <characteristics*>}
+    x: <mob's x coordinate>
+    y: <mob's y coordinate>
+    characteristics : { <characteristics*>}
     inventory : [{item description}, ...]
-    attackRadius : <radius of attack>
-    flags: [<flag_enum1>, ...]
+    flags: [<flag1>, ...]
     race: <mob's race>
-    
-Races: ORC, EVIL, TROLL, GIANT, DEMON, METAL, DRAGON, UNDEAD, ANIMAL, PLAYER
+```
+Races: ORC, EVIL, TROLL, GIANT, DEMON, METAL, DRAGON, UNDEAD, ANIMAL, PLAYER.
+Races taken from Angband (except PLAYER that added by Mark).
+Flags are follows: CAN_MOVE, CAN_BLOW, HATE_{any race flag}.
+Flags in origin: NEVER_MOVE, NEVER_BLOW and many others.
+If mob hasn't flag NEVER_MOVE (NEVER_BLOW), it has CAN_MOVE (CAN_BLOW) flag by default. 
+Otherwise, if mob has never-flag in angband, it hasn't corresponding flag in our MMO.
+HATE-Flags added by our team.
 
 ### Response
 
-    result: ok, badPoint
+```json
+    result: ok, badPoint, badFlag, badRace, badInventory
     id: <generated mob's id>
+```
 
 ### PutPlayer
+
+Puts player instance to map with specified inventory, slots and characteristics.
+Player has CAN_MOVE, CAN_BLOW flags by default.
+
 ## Request
 
+```json
     action : "putPlayer"
-    point  : {x : <player's x>, y : <player's y>}
+    x : <player's x>
+	y : <player's y>
     characteristics  : { <characteristics*> }
     inventory : [{item description*}, ...]
-    slots : [ {slot : <slotName>, item : <item description*>}, ... ]
-    attackRadius : <radius of attack>
+    slots : { <slotName> : <item description*> }
+```
 
 ## Response
-    
-    result : ok, badPoint
+
+```json
+    result : ok, badPoint, badInventory, badSlot
     id     : <generated player's id>
-    
+```
     
 ### PutItem 
 
 ## Request
 
+```json
     action : "putItem"
-    point  : {x : <item place x>, y : <item place y>}
-    item   : <item description>
-    
+    x : <item place x>
+	y : <item place y>
+    item : <item description>
+```
+
 ## Response
 
-    result : ok, badPoint
+```json
+    result : ok, badPoint, badItem
     id     : <generated item id>
+```
 
 ### Notes
 
-## characteristics
+## Characteristics
 
-Characteristics are the follows: `HP`, `MP`, `STRENGTH`, `INTELLEGENCE`, `WISDOM`, `DEXTERITY`, 
-`SPEED`, `DEFENSE`, `MAGICK_RESISTANCE`, `CAPACITY`.
+Characteristic in the Angband: STR, INT, WIS, DEX, CON, SPEED, STEALTH, SEARCH, LIGHT, TUNNEL.
+Characteristics are the follows: `STRENGTH` (STR) , `INTELLEGENCE` (INT), `WISDOM` (WIS), `DEXTERITY` (DEX),
+`SPEED` (SPEED), `DEFENSE`, `MAGICK_RESISTANCE`, `CAPACITY`, `HP`, `MP`.
 If characteristic is not required for testing it can be omitted.
 
 ## Item description
 
-{
-    weight : <item weight>,
-    class  : <item class enum>,
-    type   : <item type enum>,
-    subtype : <item subtype enum>
-    bonuses : [{bonus description*}, ...],
-    effects : [{effect description*}, ...],
-}
+```json
+	{
+		weight : <item weight>,
+		class  : <item class enum>,
+		type   : <item type enum>,
+		subtype : <item subtype enum>
+		bonuses : [{bonus description*}, ...],
+		effects : [{effect description*}, ...],
+	}
+```
 
 Field `subtype` MAY be omitted if one is not required.
 
@@ -690,22 +713,50 @@ Note about equipping polearms. If `polearm` or `bow` gets equipped, shield `MUST
    
 ## Bonus description
 
+Json-object represent bonus description.
+There is a one kind of bonuses in Angband: constant bonus to some characteristic.
+Our team added something like it: bonus to any characteristic of active object (mob, player),
+but it can be calculated as percent bonus. So, we have two kinds of bonuses: constant bonus and percent bonus.
+Calculation for constant bonus: <characteristic> += <bonus_val>
+Calculation for percent bonus: <characteristic> += <characteristic> * <bonus_val>
+Value of bonus can be a negative.
+
+```json
 {
     characteristic : <characteristic modified by bonus>,
     effectCalculation : <const|percent>,
     value : <value of bonus>
 }
+```
 
 ## Effect description
 
+Json-object respresent effect description.
+Effects in Angband are something hazy, so I invented my own.
+Effect is something, that modified some only characteristic during some time.
+There is two kinds of effects: OnGoingEffect (modify characteristic continuously
+with some fixed value) and BonusEffect (add some bonus).
+
+OnGoingEffect description:
+
+```json
 {
     characteristic : <characteristic modified by effect>,
     duration : <effect duration in seconds>,
-    effectType : <onGoing|bonus>
+    effectType : "onGoing",
+	value : <value of effect>
 }
+```
 
-If `effectType` is `onGoing`, effect description object MUST contain fields `characteristic` and `value`; 
-otherwise (effectType is ``bonus`) field `bonus` of type Bonus description MUST persist.
+BonusEffect description:
+
+```json
+{
+	duration : <effect duration in seconds>
+	effectType : "bonus",
+	bonus : <bonus description>
+}
+```
 
 # Data Invariants
 
