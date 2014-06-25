@@ -217,8 +217,11 @@ item onto that slot badSlot is returned. If slot is already occupied then item
 which is already there gets automatically unequipped and takes of the item being
 equipped.
 
-When equipping a weapon of subtype `polearm` or `bow` while wielding a `shield`
-— shield MUST be unequipped automatically.
+When equipping a `weapon` of subtype `two-handed` or `bow` while wielding a
+`shield` in other hand — shield MUST be unequipped automatically.
+
+When equipping a `weapon` of subtype other than `bow` if there were `arrows` in
+`ammo` slot it MUST be unequipped automatically.
 
 ### Request
 
@@ -702,16 +705,23 @@ Item description is a JSON object with the following fields:
     bonuses : [{<Bonus Description*>}, ...]
     effects : [{<Effect Description*>}, ...]
 
-Field `subtype` MUST be omitted if type is not `weapon`. Otherwise it MUST be
-present.
+Bonus application order is determined via order of bonuses elements.
+Same applies to effects.
+
+Field `subtype` MUST be omitted if there is no subtypes specified for item type.
+Otherwise it MUST be present.
+
+No `shield` can be equipped with `bow` or `two-handed`.
+`arrows` can only be equipped with `bow`.
 
 #### Item Class
 
 - `garment`
-- `food`
-- `bow`
+- `consumable`
 
 #### Item Type
+
+types for `garment` class:
 
 - `amulet`
 - `ring`
@@ -721,14 +731,23 @@ present.
 - `gloves`
 - `boots`
 - `weapon`
+- `expendable`
 
 #### Item Subtype
 
-- `sword`
-- `polearm`
+subtypes for `weapon` type of `garment` class:
+
+- `one-handed`
+- `two-handed`
 - `bow`
 
+subtypes for `expendable` type of `garment` class:
+
+- `arrows`
+
 #### Bonus description
+
+Only equipment may have bonuses.
 
 TBD: REFORMULATE section
 
