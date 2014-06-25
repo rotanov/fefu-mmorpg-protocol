@@ -664,15 +664,16 @@ Item's and projectile's size MUST be 0.
 
 ### Slots
 
-- `WEAPON` - merge of WIELD and BOW
-- `LEFT` - ring
-- `RIGHT` - ring
-- `NECK` - amulet
-- `BODY` - armor
-- `ARM` - shield
-- `HEAD` - helmet
-- `HANDS` - gloves
-- `FEET` - boots
+- `left-hand` - one-handed weapon or shield slot
+- `right-hand` - one-handed weapon or shield slot
+- `ammo` - slot for weapon expendables. e.g. arrows for bow.
+- `left-finger` - ring
+- `right-finger` - ring
+- `neck` - amulet
+- `body` - armor
+- `head` - helmet
+- `forearm` - gloves
+- `feet` - boots
 
 ## Monster
 
