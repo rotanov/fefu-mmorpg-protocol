@@ -31,6 +31,9 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
     - [Drop](#drop)
     - [Equip](#equip)
     - [Examine](#examine)
+        - [Single id Examine](#single-id-examine)
+        - [Map Cell Examine](#map-cell-examine)
+        - [Multiple id Examine](#multiple-id-examine)
     - [Get Dictionary](#get-dictionary)
     - [Logout](#logout-1)
     - [Look](#look)
@@ -38,7 +41,7 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
     - [Pick Up](#pick-up)
     - [Tick](#tick)
         - [Possible Events](#possible-events)
-            - [Attack](#attack-1)
+            - [Attack](#attack)
             - [Effect](#effect)
     - [Unequip](#unequip)
     - [Use](#use)
@@ -199,7 +202,8 @@ result MUST be `badId`. If object with this id is not an item result MUST be
 
 ## Drop
 
-Drop item from inventory to the ground.
+Drop item from inventory to the ground. Item's x and y now MUST be the same as
+client's player ones.
 
 ### Request
 
@@ -216,6 +220,10 @@ Equips item of given id onto specified slot. If it is impossible to equip this
 item onto that slot badSlot is returned. If slot is already occupied then item
 which is already there gets automatically unequipped and takes of the item being
 equipped.
+
+If item is on the ground and it is possible to Pick Up it with Pick Up request
+then it is also possible to try to equip this item from the ground. If the
+result of such equipping is `ok` than item is automatically gets picked up.
 
 When equipping a `weapon` of subtype `two-handed` or `bow` while wielding a
 `shield` in other hand — shield MUST be unequipped automatically.
@@ -235,19 +243,29 @@ When equipping a `weapon` of subtype other than `bow` if there were `arrows` in
 
 ## Examine
 
-### Request
+There are three versions of Examine. One is for single id, other is for map
+cell and last is OPTIONAL for multiple id's.
+
+### Single id Examine
+
+#### Request
 
     action: examine
     id: <actor's identifier>
 
-### Response
+#### Response
 
     id: <actor's id>
     type: <actor's type. One of `player`, `monster`, `item`, `projectile`>
-    login: <player's login. MAY be present if `type` is `player`>
     x: <x coordinate>
     y: <y coordinate>
     result: one of: ok, badSid, badId
+
+If type is `item` response MUST contain the following:
+
+    item: {<Item Description*>}
+
+See [Item Description](#item-description)
 
 If type is either `player` or `monster` response MAY contain the following:
 
@@ -255,11 +273,79 @@ If type is either `player` or `monster` response MAY contain the following:
     maxHealth: <actor's maximum number of health points>
     mana: <actor's current number of mana points>
     maxMana: <actor's maximum number of mana points>
+    inventory: [<item's id>, ...]
+
+Under various circumstances `inventory` field MAY be present or not. However if
+given id is an id of a player corresponding to client issued an `Examine`
+request and this player's inventory is not empty the field `inventory` MUST
+always be present. 
+
+If present, `inventory` is an array of item ids.
 
 If `type` is `monster` response MAY contain these fields:
     
     name: <name of a monster>
     mobType: <string describing the type of a monster>
+
+If `type` is `player` response MAY contain these fields:
+
+    slots: {"<slot name>": <item's id>, ...}
+    login: <player's login>
+
+Rules for presence of field `slots` are the same as for field `inventory`.
+If slot is empty it MAY be omitted.
+
+For possible slot names see [Slots](#slots)
+
+### Map Cell Examine
+
+#### Request
+
+(x, y) pair belongs to a cell. This cell is about to be examined.
+
+    action: examine
+    x: <x coordinate on map>
+    y: <y coordinate on map>
+
+#### Response
+
+Response JSON object MUST contain a single field `data` which is an array of
+objects each representing a result from single id version of Examine. data MUST
+contain information for all objects belonging to given cell.
+
+    data: [{<single-id-examine's result}]
+
+### Multiple id Examine
+
+The following is OPTIONAL. Examine request could be issued to examine multiple
+ids.  In such case `id` field of request is an array of item's ids. Then
+response is an array of objects each containing fields from Examine response for
+single id. e.g.
+
+    ```json
+    "data":
+    [
+        {
+            "id": 42,
+            "type": "player",
+            "login": "John",
+            "x": 0,
+            "y": 100,
+            "result": "ok"
+        },
+        {
+            "id": 43,
+            "type": "player",
+            "login": "Snow",
+            "x": 1,
+            "y": 99,
+            "result": "ok"
+        },
+        {
+            "result": "badId"
+        }
+    ]
+    ```
 
 ## Get Dictionary
 
@@ -358,6 +444,8 @@ MUST have type `item` and distance between player's center and item's center
 MUST be less or equal than constant pickUpRadius. Otherwise nothing is picked up
 and result is `badId`.
 
+If item is contained in someone's inventory than result is `badId`.
+
 If total weight of Player's inventory exceeds Player's carrying capacity after
 picking up an item and it is possible to pick up item then result MUST be
 `tooHeavy`.
@@ -420,7 +508,14 @@ equipped on the client.
 ## Use
 
 Use an object by given id. In general object can be used if it is contained in
-the player's inventory or equipped onto player. Objects could also 
+the player's inventory or equipped onto player. Objects can also be used if
+laying on the ground and can be picked up with Pick Up request.
+
+Some item require certain additional data to be specified. e.g. if using
+equipped weapon client MUST specify `x` and `y`.
+
+`badSlot` MUST be returned if using item required to be equipped e.g. using
+weapon present in inventory but unequipped.
 
 ### Request
 
@@ -431,14 +526,13 @@ Optional data for various items:
 
     x: <global map space x coordinate of target point>
     y: <global map space y coordinate of target point>
-    ammoId: <id of an ammo to use with this weapon>
 
 This section is to be completed.
 
 ### Response
 
     message: <text describing what's happened as a result of usage>
-    result: one of: ok, badId, badSlot, badAmmoId, badPos
+    result: one of: ok, badId, badSlot, badPos
 
 # Testing
 
@@ -696,7 +790,9 @@ immobilized then `move` request MUST result in `tooHeavy`.
 ### Item Description
 
 Some requests from Testing section MAY induce a need to describe an item.
-Item description is a JSON object with the following fields:
+Examine returns itemData in the same form.
+
+Item description is a set of JSON fields:
 
     weight: <item's weight>
     class: <Item Class*>
@@ -704,6 +800,8 @@ Item description is a JSON object with the following fields:
     subtype: <Item Subtype*>
     bonuses : [{<Bonus Description*>}, ...]
     effects : [{<Effect Description*>}, ...]
+
+Based on the context those fields may be wrapped in JSON object.
 
 Bonus application order is determined via order of bonuses elements.
 Same applies to effects.
