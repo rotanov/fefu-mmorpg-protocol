@@ -1,4 +1,4 @@
-# FEFU MMORPG Protocol — FEMP/0.3
+# FEFU MMORPG Protocol — FEMP/0.4
 
 # Abstract
 
@@ -850,14 +850,14 @@ Only equipment may have bonuses.
 TBD: REFORMULATE section
 
 Json-object represent bonus description.
-There is a one kind of bonuses in Angband: constant bonus to some characteristic.
-Our team added something like it: bonus to any characteristic of active object (mob, player),
+There is a one kind of bonuses in Angband: constant bonus to some stat.
+Our team added something like it: bonus to any stat of active object (mob, player),
 but it can be calculated as percent bonus. So, we have two kinds of bonuses: constant bonus and percent bonus.
-Calculation for constant bonus: <characteristic> += <bonus_val>
-Calculation for percent bonus: <characteristic> += <characteristic> * <bonus_val>
+Calculation for constant bonus: <stat> += <bonus_val>
+Calculation for percent bonus: <stat> += <stat> * <bonus_val>
 Value of bonus can be a negative.
 
-    characteristic: <characteristic modified by bonus>
+    stat: <stat modified by bonus>
     effectCalculation: <const|percent>
     value: <value of bonus>
 
@@ -867,13 +867,13 @@ TBD: REFORMULATE section
 
 Json-object respresent effect description.
 Effects in Angband are something hazy, so I invented my own.
-Effect is something, that modified some only characteristic during some time.
-There is two kinds of effects: OnGoingEffect (modify characteristic continuously
+Effect is something, that modified some only stat during some time.
+There is two kinds of effects: OnGoingEffect (modify stat continuously
 with some fixed value) and BonusEffect (add some bonus).
 
 ##### Ongoing Effect Description
 
-    characteristic : <characteristic modified by effect>
+    stat : <stat modified by effect>
     duration : <effect duration in seconds>
     type: "ongoing"
     value: <value of effect>
@@ -948,17 +948,20 @@ stats:
 
 - `STRENGTH` (STR)
 - `INTELLIGENCE` (INT)
-- `WISDOM` (WIS)
 - `DEXTERITY` (DEX)
 - `SPEED` (SPEED)
 - `DEFENSE`
 - `MAGIC_RESISTANCE`
 - `CAPACITY`
 - `HP`
+- `MAX_HP`
 - `MP`
+- `MAX_MP`
 
 Some requests from Testing section require to specify stats field. Stats field
 MUST be JSON object containing zero or more of the aforementioned stats.
 
 If any particular stat as well as the whole stats field of request is not
 required for testing it MAY be omitted.
+
+TBD: rework stats and describe which stats affect which.
