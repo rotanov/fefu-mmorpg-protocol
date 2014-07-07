@@ -596,6 +596,11 @@ Put specified mob onto the level map.
     inventory : [{<Item Description*>}, ...]
     flags: [<Flags*>, ...]
     race: <Race*>
+    dealtDamage: <mob's dealt damage by single attack>
+
+Field `dealtDamage` `MUST` exist in request. This field is specified by
+string of the form `NdM`, where N is count of verges dice and M is count 
+of dice pops.  
 
 See also:
 
