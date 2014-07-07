@@ -612,7 +612,7 @@ See also:
 ### Response
 
     id: <mob's id>
-    result: one of: ok, badPlacing, badFlag, badRace, badInventory, badStats
+    result: one of: ok, badPlacing, badFlag, badRace, badInventory, badStats, badDamage
 
 ## Put Player
 
