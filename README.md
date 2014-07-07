@@ -503,7 +503,14 @@ equipped on the client.
 ### Request
 
     action: unequip
-    id: <item's id>
+    slot: <slot to be unequipped>
+
+### Response
+
+    result: one of: ok, badSlot
+
+`badSlot` MUST be returned if `slot` field contain invalid slot specificator
+or doesn't exist in request.
 
 ## Use
 
