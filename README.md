@@ -588,7 +588,7 @@ See also:
 
 ### Response
 
-    result: ok, badPoint, badItem
+    result: ok, badPlacing, badItem
     id: <item's id>
 
 ## Put Mob
