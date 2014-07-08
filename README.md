@@ -649,7 +649,12 @@ See also:
 ### Response
 
     id: <player's id>
+    inventory: [<items' id generated in inventory>]
+    slots: {<Slot name. Slots*> : <items' id generated for slot>, ...}
     result: one of: ok, badPlacing, badInventory, badSlot, badStats
+
+If there was not items in `inventory`/`slots` field in `putPlayer` request
+then corresponding fields in response MAY be omitted.
 
 ## Set Up Constants
 
