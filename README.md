@@ -548,6 +548,9 @@ testing stage. Such messages are marked with "Testing stage only." If such
 message to be sent while testing stage is not active, server MUST respond with
 `"result": "badAction"`.
 
+All testing API provided via web-socket. All testing requests need SID field in
+request body and can return `badSid` if SID is invalid.
+
 ## Get Constants
 
 Get a set of current constant values.
