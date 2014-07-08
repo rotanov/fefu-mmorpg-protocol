@@ -656,6 +656,22 @@ See also:
 If there was not items in `inventory`/`slots` field in `putPlayer` request
 then corresponding fields in response MAY be omitted.
 
+## Enforce
+
+Testing stage only.
+
+This request tell server perform some player's action.
+
+### Request
+
+    action: "enforce"
+    enforcedAction: <object that represent any action of player>
+
+### Response
+
+    actionResult: <object that represent result of perfoming requested action>
+    result: one of: ok, badSid, badEnforcedAction
+
 ## Set Up Constants
 
 Testing stage only.
