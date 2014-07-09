@@ -676,6 +676,23 @@ This request tell server perform some player's action.
     actionResult: <object that represent result of perfoming requested action>
     result: one of: ok, badSid, badEnforcedAction
 
+## Set Location
+
+Testing stage only.
+
+Set x, y coordinates of player.
+
+### Request
+
+    action: "setLocation"
+    x: <desired player's x coordinate>
+    y: <desired player's y coordinate>
+
+### Response
+
+    result: on of: ok, badPlacing, badSid
+
+
 ## Set Up Constants
 
 Testing stage only.
