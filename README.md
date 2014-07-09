@@ -831,6 +831,15 @@ Item's and projectile's size MUST be 0.
 
 ## Monster
 
+Monsters have a simple logic realized by flags (see [Flags](#flags)). Describe
+main concepts of monsters' behavior logic.
+
+1. If monster found target, it has to go to it.
+2. If monster gets attacked by player, it MUST get player as new target.
+3. If monster gets attacked by another monster, first one has to options:
+    - if it was fighting with another monster, one MAY switch its target to attacker
+    - if it wasn't, one MUST gets attacker as new target
+
 ## Item
 
 Every item MUST have a weight. Number of items in inventory and slots of any
