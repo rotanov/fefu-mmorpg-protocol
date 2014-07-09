@@ -159,6 +159,7 @@ in ASCII.
     sid: <string representation of session identifier>
     webSocket: <WebSocket server URI>
     id: <player ID for use with Game Interaction requests>
+    fistId: <fists' id for use it when no weapon equipped>
 
 ## Logout
 
@@ -523,6 +524,9 @@ equipped weapon client MUST specify `x` and `y`.
 
 `badSlot` MUST be returned if using item required to be equipped e.g. using
 weapon present in inventory but unequipped.
+
+If no item equipped as a weapon and player want to attack, `fistId` (see [Login](#login))
+MUST be used in request.
 
 ### Request
 
