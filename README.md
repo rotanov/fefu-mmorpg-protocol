@@ -196,24 +196,38 @@ doesn't exceed pickUpRadius or item is already in player's inventory. Otherwise
 result MUST be `badId`. If object with this id is not an item result MUST be
 `badId`.
 
+If item has `consumable` class or `expendable` type (see [Items](#items))
+request body MUST contain `amount` field that specify amount of destroyed items.
+
+When `amount` field contain negative value or value that is greater than count of
+items in stack or destroyed item is not stackable, result MUST be `badAmount`.
+
 ### Request
 
     action: destroyItem
     id: <item's id>
+    amount: <items amount>
 
 ## Drop
 
 Drop item from inventory to the ground. Item's x and y now MUST be the same as
 client's player ones.
 
+If dropped item has `consumable` class or `expendable` type (see [Items](#items))
+request body MUST contain `amount` field that specify amount of dropped items.
+
+When `amount` field contain negative value or value that is greater than count of
+items in stack or dropped item is not stackable, result MUST be `badAmount`.
+
 ### Request
 
     action: drop
     id: <id>
+    amount: <dropped items amount>
 
 ### Response
 
-    result: one of: ok, badSid, badId
+    result: one of: ok, badSid, badId, badAmount
 
 ## Equip
 
