@@ -232,6 +232,10 @@ When equipping a `weapon` of subtype `two-handed` or `bow` while wielding a
 When equipping a `weapon` of subtype other than `bow` if there were `arrows` in
 `ammo` slot it MUST be unequipped automatically.
 
+If equipping has modified contents of other slots, then response MUST
+contain `slots` field, that is mapping from modified slot to id of item, that now
+is equipped in this slot.
+
 ### Request
 
     action: equip
@@ -240,6 +244,7 @@ When equipping a `weapon` of subtype other than `bow` if there were `arrows` in
 
 ### Response
 
+    slots: { <slot> : <item id>, ... }
     result: one of: ok, badId, badSid, badSlot
 
 ## Examine
