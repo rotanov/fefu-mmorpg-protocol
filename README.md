@@ -50,6 +50,8 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
     - [Put Item](#put-item)
     - [Put Mob](#put-mob)
     - [Put Player](#put-player)
+    - [Enforce](#enforce)
+    - [Set Location](#set-location)
     - [Set Up Constants](#set-up-constants)
     - [Set Up Map](#set-up-map)
     - [Start Testing](#start-testing)
