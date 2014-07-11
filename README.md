@@ -673,7 +673,9 @@ See also:
 
 ### Response
 
+    sid: <player's session id>
     id: <player's id>
+    fistId: <player's fist id>
     inventory: [<items' id generated in inventory>]
     slots: {<Slot name. Slots*> : <items' id generated for slot>, ...}
     result: one of: ok, badPlacing, badInventory, badSlot, badStats
