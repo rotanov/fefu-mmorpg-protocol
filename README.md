@@ -243,10 +243,7 @@ then it is also possible to try to equip this item from the ground. If the
 result of such equipping is `ok` than item is automatically gets picked up.
 
 When equipping a `weapon` of subtype `two-handed` or `bow` while wielding a
-`shield` in other hand — shield MUST be unequipped automatically.
-
-When equipping a `weapon` of subtype other than `bow` if there were `arrows` in
-`ammo` slot it MUST be unequipped automatically.
+some item in other hand — last one MUST be unequipped automatically.
 
 If equipping has modified contents of other slots, then response MUST
 contain `slots` field, that is mapping from modified slot to id of item, that now
