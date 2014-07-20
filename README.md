@@ -292,7 +292,7 @@ If type is either `player` or `monster` response MAY contain the following:
     maxHealth: <actor's maximum number of health points>
     mana: <actor's current number of mana points>
     maxMana: <actor's maximum number of mana points>
-    inventory: [<item's id>, ...]
+    inventory: [<item description>, ...]
 
 Under various circumstances `inventory` field MAY be present or not. However if
 given id is an id of a player corresponding to client issued an `Examine`
