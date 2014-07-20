@@ -293,6 +293,10 @@ If type is either `player` or `monster` response MAY contain the following:
     mana: <actor's current number of mana points>
     maxMana: <actor's maximum number of mana points>
     inventory: [<item description>, ...]
+    stats: {<stat name> : <stat value>, ...}
+
+Field `stats` MUST contain all stats, described in [Stats](#stats) with corresponding
+values.
 
 Under various circumstances `inventory` field MAY be present or not. However if
 given id is an id of a player corresponding to client issued an `Examine`
