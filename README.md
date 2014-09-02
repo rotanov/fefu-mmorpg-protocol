@@ -312,7 +312,7 @@ If `type` is `monster` response MAY contain these fields:
 
 If `type` is `player` response MAY contain these fields:
 
-    slots: {"<slot name>": <item's id>, ...}
+    slots: {<slot name>: <item description>, ...}
     login: <player's login>
 
 Rules for presence of field `slots` are the same as for field `inventory`.
