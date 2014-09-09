@@ -59,6 +59,7 @@ of second semester of 2013-2014 academic year by https://github.com/klenin/
 - [Data Invariants](#data-invariants)
     - [Game Objects](#game-objects)
     - [Player](#player)
+        - [Classes](#classes)
         - [Slots](#slots)
     - [Monster](#monster)
     - [Item](#item)
@@ -137,15 +138,18 @@ password: `.{6, 36}` i.e. minimal length is 6 symbols and maximum length is
 36 symbols. Any character is allowed except characters indexed from 0 to 31
 in ASCII.
 
+class: see [Player Classes](#classes)
+
 ### Request
 
     action: register
     login: <new client's login> 
     password: <new client's password>
+    class: <player class name>
 
 ### Response
 
-    result: one of: ok, badPassword, badLogin, loginExists
+    result: one of: ok, badPassword, badLogin, badClass, loginExists
 
 ## Login
 
@@ -435,6 +439,12 @@ If `type` is not `item` actor description MUST contain:
 If `type` is `monster` actor description MUST contain these fields:
 
     mobType: <string describing the type of a monster>
+
+If `type` is `player` actor description MUST contain theese fields:
+
+    class: <string describing the class of a player>
+
+for more information about class field see [Player Classes](#classes)
     
 TBD: list of possible mobType values
 
@@ -839,6 +849,12 @@ All of those MUST have square shape. Player's and monster's size MUST be 1.
 Item's and projectile's size MUST be 0.
 
 ## Player
+
+### Classes
+
+- `warrior`
+- `rogue`
+- `mage`
 
 ### Slots
 
