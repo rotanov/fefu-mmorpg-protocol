@@ -899,7 +899,8 @@ Some requests from Testing section MAY induce a need to describe an item.
 Examine returns itemData in the same form.
 
 Item description is a set of JSON fields:
-
+    
+    name: <item's name>
     weight: <item's weight>
     class: <Item Class*>
     type: <Item Type*>
