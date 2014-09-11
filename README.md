@@ -993,6 +993,11 @@ with some fixed value) and BonusEffect (add some bonus).
 
 ## Projectile
 
+    name: <projectile's name>
+    type: 'projectile'
+    x   : <projectile's x coord>
+    y   : <projectile's y coord>
+
 ## Race
 
 Both players and monsters have race. Player always have `PLAYER` race.
