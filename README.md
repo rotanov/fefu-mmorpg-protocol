@@ -402,7 +402,7 @@ See [Logout](#logout)
 ## Look
 
 A request for server to provide information for a map area around the client's
-player. Such information MUST be provided via keys `map` and `objects`.
+player. Such information MUST be provided via keys `map` and `actors`.
 
 TBD: If size of such area must be standardized
 
@@ -438,15 +438,13 @@ If `type` is not `item` actor description MUST contain:
 
 If `type` is `monster` actor description MUST contain these fields:
 
-    mobType: <string describing the type of a monster>
+    race: <string describing the race of a monster>
 
 If `type` is `player` actor description MUST contain theese fields:
 
     class: <string describing the class of a player>
 
 for more information about class field see [Player Classes](#classes)
-    
-TBD: list of possible mobType values
 
 ### Request
 
@@ -458,6 +456,8 @@ TBD: list of possible mobType values
     actors: [{...}, ...]
     x: <global map space x coordinate of player's center>
     y: <global map space y coordinate of player's center>
+
+See that actors don't contain current player itself
 
 ## Move
 
