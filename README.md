@@ -871,6 +871,12 @@ Item's and projectile's size MUST be 0.
 
 ## Monster
 
+    name : <monster's name>
+    x: <mob's x coordinate>
+    y: <mob's y coordinate>
+    stats: {<Stats*>}
+    race: <Race*>
+
 Monsters have a simple logic realized by flags (see [Flags](#flags)). Describe
 main concepts of monsters' behavior logic.
 
